@@ -41,14 +41,12 @@ public slots:
 
 private:
 	WindowInfoCollection m_windowInfo;
-
-	virtual void paintEvent( QPaintEvent *e );
-	void resizeEvent (QResizeEvent * event);
+	void updateWindowInfo();
 
 	int mDesktopCount;
 	int mCurrentDesktop;
 	bool mShowAllDesktopWindows;
-	void updateWindowInfo();
+
 	void drawContent(QPainter &painter);
 	bool getDesktopIconRect(int n, const QRect &outer_rect, QRect &icon_rect);
 
@@ -64,8 +62,55 @@ private:
 
     QVector<DESKTOPSTRUCT> m_Desktops;
     void updateDesktopRegions(const QSize &size);
+	int  getDesktopByPoint(const QPoint& point);
+	
+	// Icon stuff
 	int m_IconWidth;
 	int m_IconHeight;
+
+	// Mouse handling stuff
+	QPoint m_MousePressPosition;
+	bool m_bLeftButtonPressed;
+
+    class  ResizeData
+    {
+    public:
+        bool ready;
+        int original_x;
+        int original_y;
+        int min_w;
+        int min_h;
+        
+//         LPCTSTR last_cursor;
+        
+        ResizeData()
+        {
+            ready = false;
+//             last_cursor = 0;
+        }
+    } m_ResizeData;
+
+    typedef enum 
+    {
+        STATE_WATING_VW,
+        STATE_IDLE,
+        STATE_DRAG_ICON,
+        STATE_MOVE,
+        STATE_RESIZE,
+        STATE_VRESIZE,
+        STATE_HRESIZE,
+    } STATE_T;
+
+    STATE_T m_State;
+	
+	int endWindowMoving(void);
+
+	// Events from QWidgets
+	virtual void paintEvent( QPaintEvent *e );
+	virtual void resizeEvent (QResizeEvent * event);
+// 	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
+// 	virtual void mouseMoveEvent(QMouseEvent * event);
 };
 
 }

@@ -22,6 +22,7 @@ MainWindow::MainWindow()
  : QWidget(NULL /*, Qt::FramelessWindowHint | Qt::Tool*/)
  , mDesktopCount(3)
  , mShowAllDesktopWindows(false)
+ , m_bLeftButtonPressed(false)
 {
 	mDesktopCount = KWindowSystem::numberOfDesktops();
 	mCurrentDesktop = KWindowSystem::currentDesktop();
@@ -372,4 +373,355 @@ bool ikonized::MainWindow::getDesktopIconRect(int n, const QRect &outer_rect, QR
 
     // check that icon will be visible
     return icon_rect.intersects(outer_rect);
+}
+
+// void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
+// {
+//     QPoint point(event->pos());
+//     int desktop, icon;
+// 
+// 	grabMouse();
+// 
+//     m_bLeftButtonPressed = true;
+// 
+//     m_MousePressPosition = point;
+// 
+// //     ResetDragData(); // TODO drag
+// 
+//     if (m_ResizeData.ready/* && m_pSkin->IsSizable()*/)
+//     {
+//         m_State = STATE_RESIZE;
+// 
+//         m_ResizeData.original_x = x();
+//         m_ResizeData.original_y = y();
+// 
+// /*        if (m_pSkin)
+//         {
+//             Gdiplus::Size min_size;
+//             m_pSkin->GetMinSize(GetDesktopY(), GetDesktopX(), min_size);
+// 
+//             m_ResizeData.min_w = min_size.Width;
+//             m_ResizeData.min_h = min_size.Height;
+//         }
+//         else*/
+//         {
+//             m_ResizeData.min_w = m_ResizeData.min_h = 0;
+//         }
+//     }
+//     
+// //     GetDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
+// // 
+// //     if (icon >= 0)
+// //     {
+// //         windowType* window_info = NULL; 
+// //         
+// //         GetWindowByDesktopIcon(desktop, icon, &window_info);
+// // 
+// //         if (window_info)
+// //         {
+// //             if (!window_info->Sticky)
+// //             {
+// //                 SetDragMode(window_info->Handle, point);
+// //             }
+// //         }
+// //     }
+// }
+
+void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
+{
+    QPoint  point(event->pos());
+    int desktop;
+
+	releaseMouse();
+
+    m_bLeftButtonPressed = false;
+
+//     StopDragMode();
+    
+/*    if (m_State == STATE_DRAG_ICON)
+    {
+        Gdiplus::Rect dragging_icon_rect(m_DragData.position , Gdiplus::Size(m_IconWidth, m_IconHeight));
+
+        // invalidate old position
+        InvalidateRect(dragging_icon_rect);
+
+        if (point.Equals(m_MousePressPosition))
+        {
+            // access window...
+            CVWModule::AccessWindow(m_DragData.target_window , 3);
+            CVWModule::MakeForegroundWindow(m_DragData.target_window);
+
+            // Restore window if minimized
+            long window_style = ::GetWindowLong(m_DragData.target_window, GWL_STYLE);
+
+            if (window_style & WS_MINIMIZE)
+            {
+                ::ShowWindow(m_DragData.target_window, SW_SHOWNORMAL);
+            }
+            
+            if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
+               !(m_HideData.m_AutohideForced))
+            {
+                ShowWindow(SW_HIDE);
+            }
+            
+        }
+        else if ((desktop = GetDesktopByPoint(point)) != GetDesktopByPoint(m_MousePressPosition))
+        {
+            // move window to desktop
+            CVWModule::MoveWindowToDesktop(m_DragData.target_window, desktop);
+
+            // update window list
+            RequestWindowsList(REFRESH_FULL_REDRAW);
+        }            
+
+        ResetDragData();
+    }
+    else */if (m_State == STATE_MOVE)
+    {
+        endWindowMoving();
+    }
+    else if (m_State == STATE_RESIZE)
+    {
+        m_State = STATE_IDLE;
+    }
+    else
+    {
+        desktop = getDesktopByPoint(point);
+
+        if (desktop != mCurrentDesktop)
+        {
+			KWindowSystem::setCurrentDesktop(desktop);
+
+			// TODO autohiding
+//             if (m_Settings.GetBoolValue(SETTING_HideAfterDesktopChanging)
+//                 && !(m_HideData.m_AutohideForced))
+//            {
+//                 ShowWindow(SW_HIDE);
+//             }
+
+        }
+    }
+}
+
+// void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
+// {
+//     QPoint point(event->pos());
+//     
+//     static bool bTooltipVisible = false;
+//     static QPoint PrevPosition;
+// 
+//     /* ignore dummy events */
+//     if (PrevPosition == point)
+//     {
+//         return;
+//     }
+// 
+//     PrevPosition = point;
+// 
+// /*    if (m_State == STATE_DRAG_ICON)
+//     {
+//         assert(m_DragData.target_window != 0);
+// 
+//         if (bTooltipVisible)
+//         {
+//             m_ToolTip.ShowToolTip(FALSE);
+//             bTooltipVisible = false;
+//         }
+// 
+//         m_DragData.position = point - m_DragData.icon_point;
+// 
+//         m_DraggingIconWnd.SetPosition(m_DragData.position.X, 
+//                                       m_DragData.position.Y);
+//     }
+//     else */if (m_State == STATE_MOVE) // continue moving
+//     {
+// //         QRect  window_rect(pos(), ;
+// //         GetWindowRect(&window_rect);
+// 
+//         int w = width();
+//         int h = height();
+//         
+//         QPoint shift = point - m_MoveData.old_position;
+// 
+//         window_rect.top += shift.Y;
+//         window_rect.bottom += shift.Y;
+// 
+//         window_rect.left  += shift.X;
+//         window_rect.right += shift.X;
+// 
+// 
+//         // adjust window position to screen borders
+//         RECT desktop_rect;
+//         GetVirtualDesktopRect(&desktop_rect);
+// 
+//         if (adjust_window_bounds<LONG>(window_rect.top, window_rect.bottom, desktop_rect.top, desktop_rect.bottom, 10))
+//         {
+//             m_MoveData.old_position.Y = point.Y;
+//         }
+// 
+//         if (adjust_window_bounds<LONG>(window_rect.left, window_rect.right, desktop_rect.left, desktop_rect.right, 10))
+//         {
+//             m_MoveData.old_position.X = point.X;
+//         }
+// 
+//         MoveCells(window_rect.left, window_rect.top);
+//     }
+//     else if (m_State == STATE_RESIZE)
+//     {
+//         int dx = point.X - m_MousePressPosition.X;
+//         int dy = point.Y - m_MousePressPosition.Y;
+//         
+//         int w = m_ResizeData.original_x + dx;
+//         int h = m_ResizeData.original_y + dy;
+//         
+//         if (w < m_ResizeData.min_w)
+//         {
+//             w = m_ResizeData.min_w;
+//         }
+//         if (h < m_ResizeData.min_h)
+//         {
+//             h = m_ResizeData.min_h;
+//         }
+//         
+//         SetWindowPos(0, 0, 0,
+//                      w, 
+//                      h,
+//                      SWP_NOZORDER | SWP_NOMOVE);
+//     }
+//     else if (m_bLeftButtonPressed) // start window moving or resizeing
+//     {
+//         int dx = point.X - m_MousePressPosition.X;
+//         int dy = point.Y - m_MousePressPosition.Y;
+// 
+//         if ((dx > SWITCH_TO_MOVE_THRESEHOLD) ||
+//             (dx < -SWITCH_TO_MOVE_THRESEHOLD) ||
+//             (dy > SWITCH_TO_MOVE_THRESEHOLD) ||
+//             (dy < -SWITCH_TO_MOVE_THRESEHOLD))
+// 
+//         {
+//             StartWindowMoving(m_MousePressPosition);
+// 
+//             m_ToolTip.ShowToolTip(FALSE);
+//             bTooltipVisible = false;
+//         }
+// 
+//     }
+//     else 
+//     {
+//         if (m_pSkin->IsSizable())
+//         {
+//             LPCTSTR cursor_name = 0;
+//             CRect rect;
+//             GetClientRect(rect);
+// 
+//             bool left    = (pt.x - rect.left) < RESIZE_BORDER;
+//             bool right   = (rect.right - pt.x) < RESIZE_BORDER;
+//             bool top     = (pt.y - rect.top) < RESIZE_BORDER;
+//             bool bottom  = (rect.bottom - pt.y) < RESIZE_BORDER;
+// 
+//             m_ResizeData.ready = true;
+// 
+//             if (/*left && top ||*/
+//                 right && bottom)
+//             {
+//                 cursor_name = IDC_SIZENWSE;
+//             }
+//             //else if (right && top ||
+//             //         left && bottom)
+//             //{
+//             //    cursor_name = IDC_SIZENESW;
+//             //}
+//             //else if (left || right)
+//             //{
+//             //    cursor_name = IDC_SIZEWE;
+//             //}
+//             //else if (top || bottom)
+//             //{
+//             //    cursor_name = IDC_SIZENS;
+//             //}
+//             else
+//             {
+//                 cursor_name = IDC_ARROW;
+//                 m_ResizeData.ready = false;
+//             }
+// 
+//             if (cursor_name && m_ResizeData.last_cursor != cursor_name)
+//             {
+//                 HCURSOR cursor = LoadCursor(0, cursor_name);
+// 
+//                 ::SetClassLong(m_hWnd, GCL_HCURSOR, (LONG)cursor);
+//                 m_ResizeData.last_cursor = cursor_name;
+//             }
+//         }
+// 
+//         // update tool tip position
+//         int nDesktop, nIcon;
+//         TCHAR window_name[MAX_PATH];
+// 
+//         // move tooltip window
+//         CPoint tooltip_pos(pt);
+// 
+//         ClientToScreen(&tooltip_pos);
+// 
+//         tooltip_pos.x += 16;
+//         tooltip_pos.y += 16;
+// 
+//         m_ToolTip.SetToolTipPosition(tooltip_pos);
+// 
+//         /* if cursors hovers some window icon */
+// 
+//         GetDesktopIconByPoint(point, nDesktop, nIcon);
+// 
+//         if (nIcon >= 0)
+//         {
+//             /* update */
+//             if ((m_nPrevTooltipDesktop != nDesktop) ||
+//                 (m_nPrevTooltipIcon != nIcon))
+//             {
+//                 HWND hWnd = GetWindowByDesktopIcon(nDesktop, nIcon);
+// 
+//                 m_hHoveredWindow = hWnd;
+// 
+//                 ::GetWindowText(hWnd, window_name, MAX_PATH);
+// 
+//                 m_ToolTip.UpdateToolTipText(window_name);
+// 
+//                 m_ToolTip.ShowToolTip(TRUE);
+//                 bTooltipVisible = true;
+// 
+//                 SetTooltipTimer();
+// 
+//                 m_nPrevTooltipDesktop = nDesktop;
+//                 m_nPrevTooltipIcon    = nIcon;
+//             }
+//         }
+//         else if (bTooltipVisible)
+//         {
+//             m_ToolTip.ShowToolTip(FALSE);
+//             bTooltipVisible = false;
+//             m_hHoveredWindow = 0;
+//         }
+// 
+//     }
+// }
+
+int ikonized::MainWindow::endWindowMoving(void )
+{
+	Q_ASSERT(m_State == STATE_MOVE);
+	m_State = STATE_IDLE;
+	return 0;
+}
+
+int ikonized::MainWindow::getDesktopByPoint(const QPoint& point)
+{
+    for (int i=1; i < m_Desktops.size(); i++)
+    {
+        if (m_Desktops[i].m_OveralRegion.contains(point))
+        {
+            return i;
+        }
+    }
+
+    return -1;
 }
