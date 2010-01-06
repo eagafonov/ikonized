@@ -22,7 +22,7 @@
 namespace ikonized {
 
 MainWindow::MainWindow()
- : QWidget(NULL , Qt::FramelessWindowHint /*| Qt::Tool*/)
+ : QWidget(NULL , Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint/*| Qt::Tool*/)
  , mDesktopCount(3)
  , mShowAllDesktopWindows(false)
  , m_bLeftButtonPressed(false)
