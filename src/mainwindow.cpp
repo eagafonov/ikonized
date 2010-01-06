@@ -23,6 +23,7 @@ MainWindow::MainWindow()
  , mDesktopCount(3)
  , mShowAllDesktopWindows(false)
  , m_bLeftButtonPressed(false)
+ , m_State(STATE_IDLE)
 {
 	mDesktopCount = KWindowSystem::numberOfDesktops();
 	mCurrentDesktop = KWindowSystem::currentDesktop();
@@ -35,7 +36,7 @@ MainWindow::MainWindow()
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(numberOfDesktopsChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(desktopNamesChanged()), this, SLOT(desktopNamesChanged()));
 //     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
-//     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
 
 	m_IconWidth = 32;	// TODO get icon size from settings
@@ -80,6 +81,7 @@ void ikonized::MainWindow::currentDesktopChanged(int desktop)
 {
 	qDebug() << "Desktop #" << desktop << " activated";
 	mCurrentDesktop = desktop;
+	updateWindowInfo();
 }
 
 void ikonized::MainWindow::windowAdded(WId id)
@@ -118,9 +120,14 @@ void ikonized::MainWindow::stackingOrderChanged()
 	qDebug() << __func__;
 }
 
-void ikonized::MainWindow::windowChanged(WId , unsigned int )
+void ikonized::MainWindow::windowChanged(WId , unsigned int flags)
 {
-	qDebug() << __func__;
+
+	if (flags & NET::WM2RestackWindow)
+	{
+		qDebug() << __func__ << "Some window was moved from one desktop to another";
+		updateWindowInfo();
+	}
 }
 
 void ikonized::MainWindow::showingDesktopChanged(bool )
@@ -375,57 +382,57 @@ bool ikonized::MainWindow::getDesktopIconRect(int n, const QRect &outer_rect, QR
     return icon_rect.intersects(outer_rect);
 }
 
-// void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
-// {
-//     QPoint point(event->pos());
-//     int desktop, icon;
-// 
+void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
+{
+    QPoint point(event->pos());
+    int desktop, icon;
+
 // 	grabMouse();
-// 
-//     m_bLeftButtonPressed = true;
-// 
-//     m_MousePressPosition = point;
-// 
-// //     ResetDragData(); // TODO drag
-// 
-//     if (m_ResizeData.ready/* && m_pSkin->IsSizable()*/)
-//     {
-//         m_State = STATE_RESIZE;
-// 
-//         m_ResizeData.original_x = x();
-//         m_ResizeData.original_y = y();
-// 
-// /*        if (m_pSkin)
-//         {
-//             Gdiplus::Size min_size;
-//             m_pSkin->GetMinSize(GetDesktopY(), GetDesktopX(), min_size);
-// 
-//             m_ResizeData.min_w = min_size.Width;
-//             m_ResizeData.min_h = min_size.Height;
-//         }
-//         else*/
-//         {
-//             m_ResizeData.min_w = m_ResizeData.min_h = 0;
-//         }
-//     }
-//     
-// //     GetDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
-// // 
-// //     if (icon >= 0)
-// //     {
-// //         windowType* window_info = NULL; 
-// //         
-// //         GetWindowByDesktopIcon(desktop, icon, &window_info);
-// // 
-// //         if (window_info)
-// //         {
-// //             if (!window_info->Sticky)
-// //             {
-// //                 SetDragMode(window_info->Handle, point);
-// //             }
-// //         }
-// //     }
-// }
+
+    m_bLeftButtonPressed = true;
+
+    m_MousePressPosition = point;
+
+     resetDragData();
+
+    if (m_ResizeData.ready/* && m_pSkin->IsSizable()*/)
+    {
+        m_State = STATE_RESIZE;
+
+        m_ResizeData.original_x = x();
+        m_ResizeData.original_y = y();
+
+/*        if (m_pSkin)
+        {
+            Gdiplus::Size min_size;
+            m_pSkin->GetMinSize(GetDesktopY(), GetDesktopX(), min_size);
+
+            m_ResizeData.min_w = min_size.Width;
+            m_ResizeData.min_h = min_size.Height;
+        }
+        else*/
+        {
+            m_ResizeData.min_w = m_ResizeData.min_h = 0;
+        }
+    }
+    
+    getDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
+
+    if (icon >= 0)
+    {
+        WindowInfo* window_info = NULL;
+
+        getWindowByDesktopIcon(desktop, icon, &window_info);
+
+        if (window_info)
+        {
+            if (!window_info->mIsAllDesktops)
+            {
+                setDragMode(window_info->mId, point);
+            }
+        }
+    }
+}
 
 void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 {
@@ -438,46 +445,49 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 
 //     StopDragMode();
     
-/*    if (m_State == STATE_DRAG_ICON)
+    if (m_State == STATE_DRAG_ICON)
     {
-        Gdiplus::Rect dragging_icon_rect(m_DragData.position , Gdiplus::Size(m_IconWidth, m_IconHeight));
+//         Gdiplus::Rect dragging_icon_rect(m_DragData.position , Gdiplus::Size(m_IconWidth, m_IconHeight));
+// 
+//         // invalidate old position
+//         InvalidateRect(dragging_icon_rect);
 
-        // invalidate old position
-        InvalidateRect(dragging_icon_rect);
-
-        if (point.Equals(m_MousePressPosition))
+        if (point == m_MousePressPosition)
         {
             // access window...
-            CVWModule::AccessWindow(m_DragData.target_window , 3);
-            CVWModule::MakeForegroundWindow(m_DragData.target_window);
+			KWindowSystem::activateWindow(m_DragData.target_window);
+
+//             CVWModule::AccessWindow(m_DragData.target_window , 3);
+//             CVWModule::MakeForegroundWindow(m_DragData.target_window);
 
             // Restore window if minimized
-            long window_style = ::GetWindowLong(m_DragData.target_window, GWL_STYLE);
+//             long window_style = ::GetWindowLong(m_DragData.target_window, GWL_STYLE);
 
-            if (window_style & WS_MINIMIZE)
+
+            if (KWindowSystem::windowInfo(m_DragData.target_window, NET::WMState | NET::XAWMState).isMinimized())
             {
-                ::ShowWindow(m_DragData.target_window, SW_SHOWNORMAL);
+				KWindowSystem::raiseWindow(m_DragData.target_window);
             }
             
-            if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
+/*            if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
                !(m_HideData.m_AutohideForced))
             {
                 ShowWindow(SW_HIDE);
-            }
+            }*/
             
         }
-        else if ((desktop = GetDesktopByPoint(point)) != GetDesktopByPoint(m_MousePressPosition))
+        else if ((desktop = getDesktopByPoint(point)) != getDesktopByPoint(m_MousePressPosition))
         {
             // move window to desktop
-            CVWModule::MoveWindowToDesktop(m_DragData.target_window, desktop);
+			KWindowSystem::setOnDesktop(m_DragData.target_window, desktop);
 
             // update window list
-            RequestWindowsList(REFRESH_FULL_REDRAW);
+//             RequestWindowsList(REFRESH_FULL_REDRAW);
         }            
 
-        ResetDragData();
+        resetDragData();
     }
-    else */if (m_State == STATE_MOVE)
+    else if (m_State == STATE_MOVE)
     {
         endWindowMoving();
     }
@@ -724,4 +734,121 @@ int ikonized::MainWindow::getDesktopByPoint(const QPoint& point)
     }
 
     return -1;
+}
+
+void ikonized::MainWindow::getDesktopIconByPoint(const QPoint & point, 
+                                         int & desktop,
+                                         int & icon,
+                                         QPoint * p_icon_drag_point /* = NULL*/)
+{
+    icon = -1;
+    desktop = getDesktopByPoint(point);
+
+    int x = point.x();
+    int y = point.y();
+
+    int row;
+    int col;
+
+    if (desktop > 0)
+    {
+        Q_ASSERT(desktop < m_Desktops.size());
+
+        if (m_Desktops[desktop].m_nWindowsCount > 0)
+        {
+            // find the icon within desktop
+            x -= m_Desktops[desktop].m_InnerRegion.left();
+            y -= m_Desktops[desktop].m_InnerRegion.top();
+
+            row = y / ICON_REGION_HEIGH;
+            col = x / ICON_REGION_WIDTH;
+
+            if (p_icon_drag_point)
+            {
+                *p_icon_drag_point = QPoint(x % ICON_REGION_WIDTH, y % ICON_REGION_HEIGH);
+            }
+
+            int icons_per_row = m_Desktops[desktop].m_InnerRegion.width() / (ICON_REGION_WIDTH);
+
+            if (icons_per_row > col)
+            {
+                icon = row * icons_per_row + col;
+
+                if (icon >= m_Desktops[desktop].m_nWindowsCount)
+                {
+                    icon = -1;
+                }
+            }
+        }
+    }
+}
+
+WId ikonized::MainWindow::getWindowByDesktopIcon(int desktop, int icon, WindowInfo ** windowInfo)
+{
+    Q_ASSERT(desktop < m_Desktops.size());
+    
+    if (m_Desktops[desktop].m_nWindowsCount > 0)
+    {
+        for (WindowInfoCollection::iterator iter = m_windowInfo.begin(); iter != m_windowInfo.end(); iter++)
+        {
+            WindowInfo &win = *iter;
+
+            /* ignore sticky windows if they are not visible */
+            /* ignore hidden windows */
+            if (!mShowAllDesktopWindows && win.mIsAllDesktops)
+            {
+                continue;
+            }
+
+            if (win.mDesktop == desktop)
+            {
+                icon--;
+
+                if (icon < 0)
+                {
+                    if (windowInfo != NULL)
+                    {
+                        *windowInfo = &win;
+                    }
+
+                    return iter->mId;
+                }
+            }
+        }
+
+    }
+    return NULL;
+}
+
+int  ikonized::MainWindow::setDragMode(WId hTargetWnd, const QPoint &position)
+{
+    Q_ASSERT(m_State == STATE_IDLE);
+    m_State = STATE_DRAG_ICON;
+
+    m_DragData.target_window = hTargetWnd;
+
+//     m_DragData.icon = GetWindowIcon(hTargetWnd);
+
+    m_DragData.position = position - m_DragData.icon_point;
+
+//     m_DraggingIconWnd.SetIcon(m_DragData.icon, m_bSmalIcons ? SMALL_ICON_SIZE : BIG_ICON_SIZE);
+//     m_DraggingIconWnd.SetPosition(m_DragData.position.X, m_DragData.position.Y);
+//     m_DraggingIconWnd.SetVisible(TRUE);
+
+//     m_ToolTip.ShowToolTip(FALSE);
+
+    return 0;
+};
+
+void ikonized::MainWindow::resetDragData(void)
+{
+    if (m_State == STATE_DRAG_ICON)
+    {
+        m_State = STATE_IDLE;
+
+        // reset drag state
+        m_DragData.reset();
+
+//         StopDragMode();
+    }
 }

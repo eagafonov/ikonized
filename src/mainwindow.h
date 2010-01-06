@@ -63,6 +63,12 @@ private:
     QVector<DESKTOPSTRUCT> m_Desktops;
     void updateDesktopRegions(const QSize &size);
 	int  getDesktopByPoint(const QPoint& point);
+	void getDesktopIconByPoint(const QPoint & point,
+                               int & desktop,
+                               int & icon,
+                               QPoint * p_icon_drag_point = NULL);
+    WId getWindowByDesktopIcon(int desktop, int icon, WindowInfo ** windowInfo = NULL);
+
 	
 	// Icon stuff
 	int m_IconWidth;
@@ -90,9 +96,28 @@ private:
         }
     } m_ResizeData;
 
+
+    class DragData
+    {
+    public:
+        WId target_window;
+//      HICON icon;
+        QPoint position;
+        QPoint icon_point;
+
+        void reset()
+        {
+	           target_window = 0;
+//             icon = NULL;
+        }
+    } m_DragData;
+
+	int  setDragMode(WId hTargetWnd, const QPoint &position);
+	void resetDragData(void);
+
+
     typedef enum 
     {
-        STATE_WATING_VW,
         STATE_IDLE,
         STATE_DRAG_ICON,
         STATE_MOVE,
@@ -105,10 +130,11 @@ private:
 	
 	int endWindowMoving(void);
 
+
 	// Events from QWidgets
 	virtual void paintEvent( QPaintEvent *e );
 	virtual void resizeEvent (QResizeEvent * event);
-// 	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
 // 	virtual void mouseMoveEvent(QMouseEvent * event);
 };
