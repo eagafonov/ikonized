@@ -16,10 +16,13 @@
 #include <QDebug>
 #include <QResizeEvent>
 
+#define SWITCH_TO_MOVE_THRESEHOLD 10
+#define RESIZE_BORDER 20
+
 namespace ikonized {
 
 MainWindow::MainWindow()
- : QWidget(NULL /*, Qt::FramelessWindowHint | Qt::Tool*/)
+ : QWidget(NULL , Qt::FramelessWindowHint /*| Qt::Tool*/)
  , mDesktopCount(3)
  , mShowAllDesktopWindows(false)
  , m_bLeftButtonPressed(false)
@@ -41,7 +44,7 @@ MainWindow::MainWindow()
 
 	m_IconWidth = 32;	// TODO get icon size from settings
 	m_IconHeight = 32;
-
+	setMouseTracking(true);
 }
 
 
@@ -399,8 +402,7 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
     {
         m_State = STATE_RESIZE;
 
-        m_ResizeData.original_x = x();
-        m_ResizeData.original_y = y();
+        m_ResizeData.original_size = size();
 
 /*        if (m_pSkin)
         {
@@ -494,6 +496,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
     else if (m_State == STATE_RESIZE)
     {
         m_State = STATE_IDLE;
+		unsetCursor();
     }
     else
     {
@@ -514,23 +517,23 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
     }
 }
 
-// void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
-// {
-//     QPoint point(event->pos());
-//     
-//     static bool bTooltipVisible = false;
-//     static QPoint PrevPosition;
-// 
-//     /* ignore dummy events */
-//     if (PrevPosition == point)
-//     {
-//         return;
-//     }
-// 
-//     PrevPosition = point;
-// 
-// /*    if (m_State == STATE_DRAG_ICON)
-//     {
+void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
+{
+    QPoint point(event->pos());
+    
+    static bool bTooltipVisible = false;
+    static QPoint PrevPosition;
+
+    /* ignore dummy events */
+    if (PrevPosition == point)
+    {
+        return;
+    }
+
+    PrevPosition = point;
+
+    if (m_State == STATE_DRAG_ICON)
+    {
 //         assert(m_DragData.target_window != 0);
 // 
 //         if (bTooltipVisible)
@@ -543,25 +546,15 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 // 
 //         m_DraggingIconWnd.SetPosition(m_DragData.position.X, 
 //                                       m_DragData.position.Y);
-//     }
-//     else */if (m_State == STATE_MOVE) // continue moving
-//     {
-// //         QRect  window_rect(pos(), ;
-// //         GetWindowRect(&window_rect);
-// 
-//         int w = width();
-//         int h = height();
-//         
-//         QPoint shift = point - m_MoveData.old_position;
-// 
-//         window_rect.top += shift.Y;
-//         window_rect.bottom += shift.Y;
-// 
-//         window_rect.left  += shift.X;
-//         window_rect.right += shift.X;
-// 
-// 
-//         // adjust window position to screen borders
+    }
+    else if (m_State == STATE_MOVE) // continue moving
+    {
+        QPoint shift = point - m_MoveData.old_position;
+
+		QPoint p(pos());
+		p += shift;
+
+        // adjust window position to screen borders
 //         RECT desktop_rect;
 //         GetVirtualDesktopRect(&desktop_rect);
 // 
@@ -574,88 +567,85 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 //         {
 //             m_MoveData.old_position.X = point.X;
 //         }
-// 
-//         MoveCells(window_rect.left, window_rect.top);
-//     }
-//     else if (m_State == STATE_RESIZE)
-//     {
-//         int dx = point.X - m_MousePressPosition.X;
-//         int dy = point.Y - m_MousePressPosition.Y;
-//         
-//         int w = m_ResizeData.original_x + dx;
-//         int h = m_ResizeData.original_y + dy;
-//         
-//         if (w < m_ResizeData.min_w)
-//         {
-//             w = m_ResizeData.min_w;
-//         }
-//         if (h < m_ResizeData.min_h)
-//         {
-//             h = m_ResizeData.min_h;
-//         }
-//         
-//         SetWindowPos(0, 0, 0,
-//                      w, 
-//                      h,
-//                      SWP_NOZORDER | SWP_NOMOVE);
-//     }
-//     else if (m_bLeftButtonPressed) // start window moving or resizeing
-//     {
-//         int dx = point.X - m_MousePressPosition.X;
-//         int dy = point.Y - m_MousePressPosition.Y;
-// 
-//         if ((dx > SWITCH_TO_MOVE_THRESEHOLD) ||
-//             (dx < -SWITCH_TO_MOVE_THRESEHOLD) ||
-//             (dy > SWITCH_TO_MOVE_THRESEHOLD) ||
-//             (dy < -SWITCH_TO_MOVE_THRESEHOLD))
-// 
-//         {
-//             StartWindowMoving(m_MousePressPosition);
-// 
+
+			move(p);
+    }
+    else if (m_State == STATE_RESIZE)
+    {
+		QPoint shift = point - m_MousePressPosition;
+
+		QSize new_size = m_ResizeData.original_size + QSize(shift.x(), shift.y());
+
+        if (new_size.width() < m_ResizeData.min_w)
+        {
+            new_size.setWidth(m_ResizeData.min_w);
+        }
+        if (new_size.height() < m_ResizeData.min_h)
+        {
+            new_size.setHeight(m_ResizeData.min_h);
+        }
+
+		resize(new_size);
+    }
+    else if (m_bLeftButtonPressed) // start window moving or resizeing
+    {
+		QPoint shift = point - m_MousePressPosition;
+
+        if ((point.x() > SWITCH_TO_MOVE_THRESEHOLD) ||
+            (point.x() < -SWITCH_TO_MOVE_THRESEHOLD) ||
+            (point.y() > SWITCH_TO_MOVE_THRESEHOLD) ||
+            (point.y() < -SWITCH_TO_MOVE_THRESEHOLD))
+
+        {
+            startWindowMoving(m_MousePressPosition);
+
 //             m_ToolTip.ShowToolTip(FALSE);
 //             bTooltipVisible = false;
-//         }
-// 
-//     }
-//     else 
-//     {
+        }
+
+    }
+    else 
+    {
 //         if (m_pSkin->IsSizable())
-//         {
+        {
 //             LPCTSTR cursor_name = 0;
-//             CRect rect;
-//             GetClientRect(rect);
-// 
-//             bool left    = (pt.x - rect.left) < RESIZE_BORDER;
-//             bool right   = (rect.right - pt.x) < RESIZE_BORDER;
-//             bool top     = (pt.y - rect.top) < RESIZE_BORDER;
-//             bool bottom  = (rect.bottom - pt.y) < RESIZE_BORDER;
-// 
-//             m_ResizeData.ready = true;
-// 
-//             if (/*left && top ||*/
-//                 right && bottom)
-//             {
-//                 cursor_name = IDC_SIZENWSE;
-//             }
-//             //else if (right && top ||
-//             //         left && bottom)
-//             //{
-//             //    cursor_name = IDC_SIZENESW;
-//             //}
-//             //else if (left || right)
-//             //{
-//             //    cursor_name = IDC_SIZEWE;
-//             //}
-//             //else if (top || bottom)
-//             //{
-//             //    cursor_name = IDC_SIZENS;
-//             //}
-//             else
-//             {
+            QRect r = rect();
+
+
+            bool left    = (point.x() - r.left()) < RESIZE_BORDER;
+            bool right   = (r.right() - point.x()) < RESIZE_BORDER;
+            bool top     = (point.y() - r.top()) < RESIZE_BORDER;
+            bool bottom  = (r.bottom() - point.y()) < RESIZE_BORDER;
+
+            m_ResizeData.ready = true;
+
+            if (/*left && top ||*/
+                right && bottom)
+            {
+				qDebug() << r;
+//              cursor_name = IDC_SIZENWSE;
+				setCursor(Qt::SizeFDiagCursor);
+            }
+            //else if (right && top ||
+            //         left && bottom)
+            //{
+            //    cursor_name = IDC_SIZENESW;
+            //}
+            //else if (left || right)
+            //{
+            //    cursor_name = IDC_SIZEWE;
+            //}
+            //else if (top || bottom)
+            //{
+            //    cursor_name = IDC_SIZENS;
+            //}
+            else
+            {
 //                 cursor_name = IDC_ARROW;
-//                 m_ResizeData.ready = false;
-//             }
-// 
+                m_ResizeData.ready = false;
+				unsetCursor();
+            }
+
 //             if (cursor_name && m_ResizeData.last_cursor != cursor_name)
 //             {
 //                 HCURSOR cursor = LoadCursor(0, cursor_name);
@@ -663,8 +653,8 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 //                 ::SetClassLong(m_hWnd, GCL_HCURSOR, (LONG)cursor);
 //                 m_ResizeData.last_cursor = cursor_name;
 //             }
-//         }
-// 
+        }
+
 //         // update tool tip position
 //         int nDesktop, nIcon;
 //         TCHAR window_name[MAX_PATH];
@@ -678,7 +668,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 //         tooltip_pos.y += 16;
 // 
 //         m_ToolTip.SetToolTipPosition(tooltip_pos);
-// 
+
 //         /* if cursors hovers some window icon */
 // 
 //         GetDesktopIconByPoint(point, nDesktop, nIcon);
@@ -712,9 +702,9 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 //             bTooltipVisible = false;
 //             m_hHoveredWindow = 0;
 //         }
-// 
-//     }
-// }
+
+    }
+}
 
 int ikonized::MainWindow::endWindowMoving(void )
 {
@@ -851,4 +841,15 @@ void ikonized::MainWindow::resetDragData(void)
 
 //         StopDragMode();
     }
+}
+
+int ikonized::MainWindow::startWindowMoving(const QPoint & ancor_point)
+{
+    Q_ASSERT(m_State == STATE_IDLE);
+
+    m_State = STATE_MOVE;
+
+    m_MoveData.old_position = ancor_point;
+
+    return 0;
 }

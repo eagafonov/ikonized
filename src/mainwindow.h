@@ -82,8 +82,7 @@ private:
     {
     public:
         bool ready;
-        int original_x;
-        int original_y;
+		QSize original_size;
         int min_w;
         int min_h;
         
@@ -116,6 +115,14 @@ private:
 	void resetDragData(void);
 
 
+    class  MoveData
+    {
+    public:
+        QPoint old_position;
+    } m_MoveData;
+
+	int startWindowMoving(const QPoint & ancor_point);
+
     typedef enum 
     {
         STATE_IDLE,
@@ -136,7 +143,7 @@ private:
 	virtual void resizeEvent (QResizeEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
-// 	virtual void mouseMoveEvent(QMouseEvent * event);
+	virtual void mouseMoveEvent(QMouseEvent * event);
 };
 
 }
