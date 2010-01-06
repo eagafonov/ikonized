@@ -89,24 +89,24 @@ void ikonized::MainWindow::currentDesktopChanged(int desktop)
 
 void ikonized::MainWindow::windowAdded(WId id)
 {
-	qDebug() << __func__ << "(" << id << ")";
+// 	qDebug() << __func__ << "(" << id << ")";
 	updateWindowInfo();
 }
 
 void ikonized::MainWindow::windowRemoved(WId )
 {
-	qDebug() << __func__;
+// 	qDebug() << __func__;
 	updateWindowInfo();
 }
 
 void ikonized::MainWindow::activeWindowChanged(WId )
 {
-	qDebug() << __func__;
+// 	qDebug() << __func__;
 }
 
 void ikonized::MainWindow::numberOfDesktopsChanged(int count)
 {
-	qDebug() << "New desktop number: " << count;
+// 	qDebug() << "New desktop number: " << count;
 	mDesktopCount = count;
 
 	updateDesktopRegions(size());
@@ -115,12 +115,12 @@ void ikonized::MainWindow::numberOfDesktopsChanged(int count)
 
 void ikonized::MainWindow::desktopNamesChanged()
 {
-	qDebug() << __func__;
+// 	qDebug() << __func__;
 }
 
 void ikonized::MainWindow::stackingOrderChanged()
 {
-	qDebug() << __func__;
+// 	qDebug() << __func__;
 }
 
 void ikonized::MainWindow::windowChanged(WId , unsigned int flags)
@@ -135,7 +135,7 @@ void ikonized::MainWindow::windowChanged(WId , unsigned int flags)
 
 void ikonized::MainWindow::showingDesktopChanged(bool )
 {
-	qDebug() << __func__;
+// 	qDebug() << __func__;
 }
 
 void ikonized::MainWindow::updateWindowInfo()
@@ -164,7 +164,7 @@ void ikonized::MainWindow::updateWindowInfo()
             continue;
         }
 
-		qDebug() << __func__ << ": Adding window " <<  info.visibleName();
+// 		qDebug() << __func__ << ": Adding window " <<  info.visibleName();
 
 		WindowInfo winfo;
 		winfo.mDesktop = info.desktop();
@@ -173,7 +173,7 @@ void ikonized::MainWindow::updateWindowInfo()
 		winfo.mIconName = info.visibleIconName();
 		winfo.mIsAllDesktops = info.onAllDesktops();
 
-		qDebug() << __func__ << ": Icon " << winfo.mIconName;
+// 		qDebug() << __func__ << ": Icon " << winfo.mIconName;
 
 
 		m_windowInfo.append(winfo);
