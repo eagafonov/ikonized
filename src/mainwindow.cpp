@@ -16,6 +16,7 @@
 #include <QDebug>
 #include <QResizeEvent>
 #include <QMenu>
+#include <KToolInvocation>
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -875,9 +876,24 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
 // 	connect(actMenu, SIGNAL(triggered()), this, SLOT(buildCatalog()));
 	QAction* actOptions = menu.addAction(tr("Options"));
 	connect(actOptions, SIGNAL(triggered()), this, SLOT(menuOptions()));
+
+	QAction* actDesktops = menu.addAction(tr("Desktops"));
+	connect(actDesktops, SIGNAL(triggered()), this, SLOT(onConfigureDesktops()));
+
 	QAction* actExit = menu.addAction(tr("Exit"));
 	connect(actExit, SIGNAL(triggered()), this, SLOT(close()));
 	mMenuOpen = true;
 	menu.exec(event->globalPos());
 	mMenuOpen = false;
+}
+
+void ikonized::MainWindow::onHotKey()
+{
+	qDebug() << "Hotkey pressed";
+}
+
+void ikonized::MainWindow::onConfigureDesktops()
+{
+  QString error;
+  KToolInvocation::startServiceByDesktopName("desktop", QStringList(), &error);
 }

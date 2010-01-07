@@ -39,6 +39,9 @@ public slots:
     void windowChanged(WId ,unsigned int);
     void showingDesktopChanged(bool);
 
+	void onHotKey();
+	void onConfigureDesktops();
+
 private:
 	WindowInfoCollection m_windowInfo;
 	void updateWindowInfo();
