@@ -149,6 +149,10 @@ private:
 	// hotkeys
 	KActionCollection mActions;
 
+	// Tooltip
+	int m_nTooltipDesktop;
+    int m_nTooltipIcon;
+
 	// Events from QWidgets
 	virtual void paintEvent( QPaintEvent *e );
 	virtual void resizeEvent (QResizeEvent * event);

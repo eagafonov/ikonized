@@ -61,10 +61,7 @@ MainWindow::MainWindow()
 
 	QKeySequence keys = QKeySequence(Qt::AltModifier + Qt::Key_Space);
 
-// 	GlobalShortcutManager::disconnect(oldKey, this, SLOT(onHotKey()));
-// 	GlobalShortcutManager::connect(key, this, SLOT(onHotKey()));
-// 	oldKey = key;
-	// return GlobalShortcutManager::isConnected(key);
+	m_nTooltipDesktop = m_nTooltipIcon = -1;
 }
 
 
@@ -686,53 +683,34 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 //             }
         }
 
-//         // update tool tip position
-//         int nDesktop, nIcon;
-//         TCHAR window_name[MAX_PATH];
-// 
-//         // move tooltip window
-//         CPoint tooltip_pos(pt);
-// 
-//         ClientToScreen(&tooltip_pos);
-// 
-//         tooltip_pos.x += 16;
-//         tooltip_pos.y += 16;
-// 
-//         m_ToolTip.SetToolTipPosition(tooltip_pos);
+		int nDesktop, nIcon;
 
-//         /* if cursors hovers some window icon */
-// 
-//         GetDesktopIconByPoint(point, nDesktop, nIcon);
-// 
-//         if (nIcon >= 0)
-//         {
-//             /* update */
-//             if ((m_nPrevTooltipDesktop != nDesktop) ||
-//                 (m_nPrevTooltipIcon != nIcon))
-//             {
-//                 HWND hWnd = GetWindowByDesktopIcon(nDesktop, nIcon);
-// 
-//                 m_hHoveredWindow = hWnd;
-// 
-//                 ::GetWindowText(hWnd, window_name, MAX_PATH);
-// 
-//                 m_ToolTip.UpdateToolTipText(window_name);
-// 
-//                 m_ToolTip.ShowToolTip(TRUE);
-//                 bTooltipVisible = true;
-// 
-//                 SetTooltipTimer();
-// 
-//                 m_nPrevTooltipDesktop = nDesktop;
-//                 m_nPrevTooltipIcon    = nIcon;
-//             }
-//         }
-//         else if (bTooltipVisible)
-//         {
-//             m_ToolTip.ShowToolTip(FALSE);
-//             bTooltipVisible = false;
-//             m_hHoveredWindow = 0;
-//         }
+        getDesktopIconByPoint(point, nDesktop, nIcon);
+
+        if (nIcon >= 0)
+        {
+            /* update */
+            if ((m_nTooltipDesktop != nDesktop) ||
+                (m_nTooltipIcon != nIcon))
+            {
+                WId wnd = getWindowByDesktopIcon(nDesktop, nIcon);
+
+				QString tooltip = KWindowSystem::windowInfo(wnd, NET::WMName).name();
+				qDebug() << "Show tooltip " << tooltip;
+				setToolTip(tooltip);
+
+                m_nTooltipDesktop = nDesktop;
+                m_nTooltipIcon    = nIcon;
+            }
+        }
+        else if (m_nTooltipIcon > 0)
+        {
+			qDebug() << "Hide tooltip ";
+			setToolTip(QString());
+
+			m_nTooltipDesktop = m_nTooltipIcon    = -1;
+
+        }
 
     }
 }
