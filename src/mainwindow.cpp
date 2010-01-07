@@ -17,6 +17,9 @@
 #include <QResizeEvent>
 #include <QMenu>
 #include <KToolInvocation>
+#include <KAction>
+#include <KShortcut>
+#include <QKeySequence>
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -29,6 +32,7 @@ MainWindow::MainWindow()
  , mShowAllDesktopWindows(false)
  , m_bLeftButtonPressed(false)
  , m_State(STATE_IDLE)
+ , mActions(this)
 {
 	mDesktopCount = KWindowSystem::numberOfDesktops();
 	mCurrentDesktop = KWindowSystem::currentDesktop();
@@ -48,6 +52,19 @@ MainWindow::MainWindow()
 	m_IconHeight = 32;
 	setMouseTracking(true);
 	mMenuOpen = false;
+
+
+	// Initial hotkey FIXME get from configuration 
+	KAction *hideShowAction = mActions.addAction("Hide/Show", this, SLOT(onHotKey()));
+
+	hideShowAction->setGlobalShortcut(KShortcut(QKeySequence(Qt::AltModifier + Qt::Key_Space)));
+
+	QKeySequence keys = QKeySequence(Qt::AltModifier + Qt::Key_Space);
+
+// 	GlobalShortcutManager::disconnect(oldKey, this, SLOT(onHotKey()));
+// 	GlobalShortcutManager::connect(key, this, SLOT(onHotKey()));
+// 	oldKey = key;
+	// return GlobalShortcutManager::isConnected(key);
 }
 
 
@@ -890,6 +907,13 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
 void ikonized::MainWindow::onHotKey()
 {
 	qDebug() << "Hotkey pressed";
+
+	if (isVisible()) {
+		hide();
+	}
+	else {
+		showNormal();
+	}
 }
 
 void ikonized::MainWindow::onConfigureDesktops()

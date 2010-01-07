@@ -13,6 +13,8 @@
 #define IKONIZEDMAINWINDOW_H
 
 #include <QWidget>
+#include <KActionCollection>
+
 #include "windowinfo.h"
 
 namespace ikonized {
@@ -143,6 +145,9 @@ private:
 
 	// Context menun stuff
 	bool mMenuOpen;
+
+	// hotkeys
+	KActionCollection mActions;
 
 	// Events from QWidgets
 	virtual void paintEvent( QPaintEvent *e );
