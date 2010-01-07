@@ -15,6 +15,7 @@
 #include <KWindowSystem>
 #include <QDebug>
 #include <QResizeEvent>
+#include <QMenu>
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -45,6 +46,7 @@ MainWindow::MainWindow()
 	m_IconWidth = 32;	// TODO get icon size from settings
 	m_IconHeight = 32;
 	setMouseTracking(true);
+	mMenuOpen = false;
 }
 
 
@@ -383,6 +385,13 @@ bool ikonized::MainWindow::getDesktopIconRect(int n, const QRect &outer_rect, QR
 
 void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
 {
+	// ignore all except left mouse press
+	if (event->button() != Qt::LeftButton)
+	{
+		QWidget::mousePressEvent(event);
+		return;
+	}
+
     QPoint point(event->pos());
     int desktop, icon;
 
@@ -434,6 +443,13 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
 
 void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 {
+	// ignore all except left mouse press
+	if (event->button() != Qt::LeftButton)
+	{
+		QWidget::mouseReleaseEvent(event);
+		return;
+	}
+
     QPoint  point(event->pos());
     int desktop;
 
@@ -848,4 +864,20 @@ int ikonized::MainWindow::startWindowMoving(const QPoint & ancor_point)
     m_MoveData.old_position = ancor_point;
 
     return 0;
+}
+
+void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
+{
+	qDebug() << "Context menu requested";
+
+	QMenu menu(this);
+// 	QAction* actMenu = menu.addAction(tr("Rebuild Catalog"));
+// 	connect(actMenu, SIGNAL(triggered()), this, SLOT(buildCatalog()));
+	QAction* actOptions = menu.addAction(tr("Options"));
+	connect(actOptions, SIGNAL(triggered()), this, SLOT(menuOptions()));
+	QAction* actExit = menu.addAction(tr("Exit"));
+	connect(actExit, SIGNAL(triggered()), this, SLOT(close()));
+	mMenuOpen = true;
+	menu.exec(event->globalPos());
+	mMenuOpen = false;
 }

@@ -138,12 +138,16 @@ private:
 	int endWindowMoving(void);
 
 
+	// Context menun stuff
+	bool mMenuOpen;
+
 	// Events from QWidgets
 	virtual void paintEvent( QPaintEvent *e );
 	virtual void resizeEvent (QResizeEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
 	virtual void mouseReleaseEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
+	virtual void contextMenuEvent(QContextMenuEvent *event);
 };
 
 }
