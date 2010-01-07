@@ -105,6 +105,7 @@ void ikonized::MainWindow::currentDesktopChanged(int desktop)
 	qDebug() << "Desktop #" << desktop << " activated";
 	mCurrentDesktop = desktop;
 	updateWindowInfo(); //TODO just update image, not window list
+	hide(); // FIXME Use 'show on all desktops' instead
 }
 
 void ikonized::MainWindow::windowAdded(WId id)
