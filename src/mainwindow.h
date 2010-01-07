@@ -160,6 +160,7 @@ private:
 	virtual void mouseReleaseEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void contextMenuEvent(QContextMenuEvent *event);
+	virtual void closeEvent(QCloseEvent *event);
 };
 
 }

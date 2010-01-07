@@ -20,6 +20,7 @@
 #include <KAction>
 #include <KShortcut>
 #include <QKeySequence>
+#include <QMessageBox>
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -881,4 +882,19 @@ void ikonized::MainWindow::onConfigureDesktops()
 {
   QString error;
   KToolInvocation::startServiceByDesktopName("desktop", QStringList(), &error);
+}
+
+void ikonized::MainWindow::closeEvent(QCloseEvent * event)
+{
+	QMessageBox msgBox;
+	msgBox.setText("Close ikonized");
+	msgBox.setInformativeText("Do you want to close ikonized?");
+	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Cancel);
+	
+
+	if (msgBox.exec() == QMessageBox::Ok)
+		event->accept();
+	else
+		event->ignore();
 }
