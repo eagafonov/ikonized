@@ -417,7 +417,7 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
 
     m_MousePressPosition = point;
 
-     resetDragData();
+    resetDragData();
 
     if (m_ResizeData.ready/* && m_pSkin->IsSizable()*/)
     {
@@ -438,7 +438,7 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
             m_ResizeData.min_w = m_ResizeData.min_h = 0;
         }
     }
-    
+
     getDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
 
     if (icon >= 0)
@@ -473,26 +473,12 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 
     m_bLeftButtonPressed = false;
 
-//     StopDragMode();
-    
     if (m_State == STATE_DRAG_ICON)
     {
-//         Gdiplus::Rect dragging_icon_rect(m_DragData.position , Gdiplus::Size(m_IconWidth, m_IconHeight));
-// 
-//         // invalidate old position
-//         InvalidateRect(dragging_icon_rect);
-
         if (point == m_MousePressPosition)
         {
             // access window...
 			KWindowSystem::activateWindow(m_DragData.target_window);
-
-//             CVWModule::AccessWindow(m_DragData.target_window , 3);
-//             CVWModule::MakeForegroundWindow(m_DragData.target_window);
-
-            // Restore window if minimized
-//             long window_style = ::GetWindowLong(m_DragData.target_window, GWL_STYLE);
-
 
             if (KWindowSystem::windowInfo(m_DragData.target_window, NET::WMState | NET::XAWMState).isMinimized())
             {
@@ -510,10 +496,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
         {
             // move window to desktop
 			KWindowSystem::setOnDesktop(m_DragData.target_window, desktop);
-
-            // update window list
-//             RequestWindowsList(REFRESH_FULL_REDRAW);
-        }            
+        }
 
         resetDragData();
     }
@@ -549,7 +532,6 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 {
     QPoint point(event->pos());
     
-    static bool bTooltipVisible = false;
     static QPoint PrevPosition;
 
     /* ignore dummy events */
@@ -560,22 +542,11 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 
     PrevPosition = point;
 
-    if (m_State == STATE_DRAG_ICON)
+	if (m_State == STATE_DRAG_ICON)
     {
-//         assert(m_DragData.target_window != 0);
-// 
-//         if (bTooltipVisible)
-//         {
-//             m_ToolTip.ShowToolTip(FALSE);
-//             bTooltipVisible = false;
-//         }
-// 
-//         m_DragData.position = point - m_DragData.icon_point;
-// 
-//         m_DraggingIconWnd.SetPosition(m_DragData.position.X, 
-//                                       m_DragData.position.Y);
+		// Do nothing here
     }
-    else if (m_State == STATE_MOVE) // continue moving
+	else if (m_State == STATE_MOVE) // continue moving
     {
         QPoint shift = point - m_MoveData.old_position;
 
@@ -626,9 +597,6 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 
         {
             startWindowMoving(m_MousePressPosition);
-
-//             m_ToolTip.ShowToolTip(FALSE);
-//             bTooltipVisible = false;
         }
 
     }
@@ -822,19 +790,16 @@ WId ikonized::MainWindow::getWindowByDesktopIcon(int desktop, int icon, WindowIn
 int  ikonized::MainWindow::setDragMode(WId hTargetWnd, const QPoint &position)
 {
     Q_ASSERT(m_State == STATE_IDLE);
+	qDebug() << "Start icon dragging";
+
     m_State = STATE_DRAG_ICON;
 
     m_DragData.target_window = hTargetWnd;
 
-//     m_DragData.icon = GetWindowIcon(hTargetWnd);
-
     m_DragData.position = position - m_DragData.icon_point;
 
-//     m_DraggingIconWnd.SetIcon(m_DragData.icon, m_bSmalIcons ? SMALL_ICON_SIZE : BIG_ICON_SIZE);
-//     m_DraggingIconWnd.SetPosition(m_DragData.position.X, m_DragData.position.Y);
-//     m_DraggingIconWnd.SetVisible(TRUE);
-
-//     m_ToolTip.ShowToolTip(FALSE);
+	QCursor cursor(KWindowSystem::icon(hTargetWnd, m_IconWidth, m_IconHeight, true), m_DragData.icon_point.x(), m_DragData.icon_point.y());
+	setCursor(cursor);
 
     return 0;
 };
@@ -843,12 +808,12 @@ void ikonized::MainWindow::resetDragData(void)
 {
     if (m_State == STATE_DRAG_ICON)
     {
+		qDebug() << "Stop icon dragging";
         m_State = STATE_IDLE;
 
         // reset drag state
         m_DragData.reset();
-
-//         StopDragMode();
+		unsetCursor();
     }
 }
 
