@@ -505,7 +505,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 				qDebug() << "Activate window" << win;
 	
 				// access window...
-				KWindowSystem::activateWindow(win);
+				KWindowSystem::forceActiveWindow(win);
 	
 	            if (KWindowSystem::windowInfo(win, NET::WMState | NET::XAWMState).isMinimized())
 	            {
