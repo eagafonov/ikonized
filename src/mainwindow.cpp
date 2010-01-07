@@ -409,7 +409,6 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
 	}
 
     QPoint point(event->pos());
-    int desktop, icon;
 
 // 	grabMouse();
 
@@ -438,23 +437,6 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
             m_ResizeData.min_w = m_ResizeData.min_h = 0;
         }
     }
-
-    getDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
-
-    if (icon >= 0)
-    {
-        WindowInfo* window_info = NULL;
-
-        getWindowByDesktopIcon(desktop, icon, &window_info);
-
-        if (window_info)
-        {
-            if (!window_info->mIsAllDesktops)
-            {
-                setDragMode(window_info->mId, point);
-            }
-        }
-    }
 }
 
 void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
@@ -475,24 +457,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 
     if (m_State == STATE_DRAG_ICON)
     {
-        if (point == m_MousePressPosition)
-        {
-            // access window...
-			KWindowSystem::activateWindow(m_DragData.target_window);
-
-            if (KWindowSystem::windowInfo(m_DragData.target_window, NET::WMState | NET::XAWMState).isMinimized())
-            {
-				KWindowSystem::raiseWindow(m_DragData.target_window);
-            }
-            
-/*            if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
-               !(m_HideData.m_AutohideForced))
-            {
-                ShowWindow(SW_HIDE);
-            }*/
-            
-        }
-        else if ((desktop = getDesktopByPoint(point)) != getDesktopByPoint(m_MousePressPosition))
+		if ((desktop = getDesktopByPoint(point)) != getDesktopByPoint(m_MousePressPosition))
         {
             // move window to desktop
 			KWindowSystem::setOnDesktop(m_DragData.target_window, desktop);
@@ -511,10 +476,15 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
     }
     else
     {
-        desktop = getDesktopByPoint(point);
+		int icon;
+
+		getDesktopIconByPoint(point, desktop, icon);
+
+		qDebug() << "Click on desktop #" << desktop << ", icon #"<<icon;
 
         if (desktop != mCurrentDesktop)
         {
+			qDebug() << "Switch to desktop" << desktop;
 			KWindowSystem::setCurrentDesktop(desktop);
 
 			// TODO autohiding
@@ -525,6 +495,31 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 //             }
 
         }
+
+		if (icon >= 0)
+		{
+			WId win = getWindowByDesktopIcon(desktop, icon);
+	
+			if (win > 0)
+			{
+				qDebug() << "Activate window" << win;
+	
+				// access window...
+				KWindowSystem::activateWindow(win);
+	
+	            if (KWindowSystem::windowInfo(win, NET::WMState | NET::XAWMState).isMinimized())
+	            {
+					KWindowSystem::raiseWindow(win);
+	            }
+				
+// 	            if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
+// 	               !(m_HideData.m_AutohideForced))
+// 	            {
+// 	                ShowWindow(SW_HIDE);
+// 	            }
+				
+			}
+		}
     }
 }
 
@@ -542,11 +537,7 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 
     PrevPosition = point;
 
-	if (m_State == STATE_DRAG_ICON)
-    {
-		// Do nothing here
-    }
-	else if (m_State == STATE_MOVE) // continue moving
+	if (m_State == STATE_MOVE) // continue moving
     {
         QPoint shift = point - m_MoveData.old_position;
 
@@ -586,101 +577,127 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 
 		resize(new_size);
     }
-    else if (m_bLeftButtonPressed) // start window moving or resizeing
-    {
-		QPoint shift = point - m_MousePressPosition;
-
-        if ((point.x() > SWITCH_TO_MOVE_THRESEHOLD) ||
-            (point.x() < -SWITCH_TO_MOVE_THRESEHOLD) ||
-            (point.y() > SWITCH_TO_MOVE_THRESEHOLD) ||
-            (point.y() < -SWITCH_TO_MOVE_THRESEHOLD))
-
-        {
-            startWindowMoving(m_MousePressPosition);
-        }
-
-    }
-    else 
-    {
-//         if (m_pSkin->IsSizable())
-        {
-//             LPCTSTR cursor_name = 0;
-            QRect r = rect();
-
-
-            bool left    = (point.x() - r.left()) < RESIZE_BORDER;
-            bool right   = (r.right() - point.x()) < RESIZE_BORDER;
-            bool top     = (point.y() - r.top()) < RESIZE_BORDER;
-            bool bottom  = (r.bottom() - point.y()) < RESIZE_BORDER;
-
-            m_ResizeData.ready = true;
-
-            if (/*left && top ||*/
-                right && bottom)
-            {
-				qDebug() << r;
-//              cursor_name = IDC_SIZENWSE;
-				setCursor(Qt::SizeFDiagCursor);
-            }
-            //else if (right && top ||
-            //         left && bottom)
-            //{
-            //    cursor_name = IDC_SIZENESW;
-            //}
-            //else if (left || right)
-            //{
-            //    cursor_name = IDC_SIZEWE;
-            //}
-            //else if (top || bottom)
-            //{
-            //    cursor_name = IDC_SIZENS;
-            //}
-            else
-            {
-//                 cursor_name = IDC_ARROW;
-                m_ResizeData.ready = false;
-				unsetCursor();
-            }
-
-//             if (cursor_name && m_ResizeData.last_cursor != cursor_name)
-//             {
-//                 HCURSOR cursor = LoadCursor(0, cursor_name);
-// 
-//                 ::SetClassLong(m_hWnd, GCL_HCURSOR, (LONG)cursor);
-//                 m_ResizeData.last_cursor = cursor_name;
-//             }
-        }
-
-		int nDesktop, nIcon;
-
-        getDesktopIconByPoint(point, nDesktop, nIcon);
-
-        if (nIcon >= 0)
-        {
-            /* update */
-            if ((m_nTooltipDesktop != nDesktop) ||
-                (m_nTooltipIcon != nIcon))
-            {
-                WId wnd = getWindowByDesktopIcon(nDesktop, nIcon);
-
-				QString tooltip = KWindowSystem::windowInfo(wnd, NET::WMName).name();
-				qDebug() << "Show tooltip " << tooltip;
-				setToolTip(tooltip);
-
-                m_nTooltipDesktop = nDesktop;
-                m_nTooltipIcon    = nIcon;
-            }
-        }
-        else if (m_nTooltipIcon > 0)
-        {
-			qDebug() << "Hide tooltip ";
-			setToolTip(QString());
-
-			m_nTooltipDesktop = m_nTooltipIcon    = -1;
-
-        }
-
-    }
+    else if (m_State == STATE_IDLE)
+	{
+		if (m_bLeftButtonPressed) // start window moving or icon dragging
+		{
+			QPoint shift = point - m_MousePressPosition;
+	
+			if ((point.x() > SWITCH_TO_MOVE_THRESEHOLD) ||
+				(point.x() < -SWITCH_TO_MOVE_THRESEHOLD) ||
+				(point.y() > SWITCH_TO_MOVE_THRESEHOLD) ||
+				(point.y() < -SWITCH_TO_MOVE_THRESEHOLD))
+	
+			{
+				int desktop, icon;
+	
+				getDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
+			
+				if (icon >= 0)
+				{
+					WindowInfo* window_info = NULL;
+			
+					getWindowByDesktopIcon(desktop, icon, &window_info);
+			
+					if (window_info)
+					{
+						if (!window_info->mIsAllDesktops)
+						{
+							setDragMode(window_info->mId, point);
+						}
+					}
+				}
+	
+				// If dragging wasn't started, start window moving
+				if (m_State == STATE_IDLE)
+				{
+					startWindowMoving(m_MousePressPosition);
+				}
+			}
+	
+		}
+		else 
+		{
+	//         if (m_pSkin->IsSizable())
+			{
+	//             LPCTSTR cursor_name = 0;
+				QRect r = rect();
+	
+	
+				bool left    = (point.x() - r.left()) < RESIZE_BORDER;
+				bool right   = (r.right() - point.x()) < RESIZE_BORDER;
+				bool top     = (point.y() - r.top()) < RESIZE_BORDER;
+				bool bottom  = (r.bottom() - point.y()) < RESIZE_BORDER;
+	
+				m_ResizeData.ready = true;
+	
+				if (/*left && top ||*/
+					right && bottom)
+				{
+// 					qDebug() << r;
+	//              cursor_name = IDC_SIZENWSE;
+					setCursor(Qt::SizeFDiagCursor);
+				}
+				//else if (right && top ||
+				//         left && bottom)
+				//{
+				//    cursor_name = IDC_SIZENESW;
+				//}
+				//else if (left || right)
+				//{
+				//    cursor_name = IDC_SIZEWE;
+				//}
+				//else if (top || bottom)
+				//{
+				//    cursor_name = IDC_SIZENS;
+				//}
+				else
+				{
+	//                 cursor_name = IDC_ARROW;
+					m_ResizeData.ready = false;
+					unsetCursor();
+				}
+	
+	//             if (cursor_name && m_ResizeData.last_cursor != cursor_name)
+	//             {
+	//                 HCURSOR cursor = LoadCursor(0, cursor_name);
+	// 
+	//                 ::SetClassLong(m_hWnd, GCL_HCURSOR, (LONG)cursor);
+	//                 m_ResizeData.last_cursor = cursor_name;
+	//             }
+			}
+	
+			int nDesktop, nIcon;
+	
+			getDesktopIconByPoint(point, nDesktop, nIcon);
+	
+			if (nIcon >= 0)
+			{
+				/* update */
+				if ((m_nTooltipDesktop != nDesktop) ||
+					(m_nTooltipIcon != nIcon))
+				{
+					WId wnd = getWindowByDesktopIcon(nDesktop, nIcon);
+	
+					QString tooltip = KWindowSystem::windowInfo(wnd, NET::WMName).name();
+					qDebug() << "Show tooltip " << tooltip;
+					setToolTip(tooltip);
+	
+					m_nTooltipDesktop = nDesktop;
+					m_nTooltipIcon    = nIcon;
+				}
+			}
+			else if (m_nTooltipIcon > 0)
+			{
+				qDebug() << "Hide tooltip ";
+				setToolTip(QString());
+	
+				m_nTooltipDesktop = m_nTooltipIcon    = -1;
+	
+			}
+	
+		}
+	}
 }
 
 int ikonized::MainWindow::endWindowMoving(void )
@@ -784,7 +801,7 @@ WId ikonized::MainWindow::getWindowByDesktopIcon(int desktop, int icon, WindowIn
         }
 
     }
-    return NULL;
+    return 0;
 }
 
 int  ikonized::MainWindow::setDragMode(WId hTargetWnd, const QPoint &position)
