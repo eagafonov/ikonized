@@ -1,0 +1,13 @@
+Source: ikonized
+Section: unknown
+Priority: extra
+Maintainer: Eugene Agafonov <e.a.agafonov@gmail.com>
+Build-Depends: debhelper (>= 7), cmake (>=2.6), kdelibs5-dev
+Standards-Version: 3.8.3
+Homepage: <insert the upstream URL, if relevant>
+
+Package: ikonized
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Pager for KDE4
+ Nice replacemnet for default pager applet
