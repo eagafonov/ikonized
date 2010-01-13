@@ -105,7 +105,7 @@ void ikonized::MainWindow::currentDesktopChanged(int desktop)
 	hide(); // FIXME Use 'show on all desktops' instead
 }
 
-void ikonized::MainWindow::windowAdded(WId id)
+void ikonized::MainWindow::windowAdded(WId /*id*/)
 {
 	updateWindowInfo();
 }
@@ -138,7 +138,7 @@ void ikonized::MainWindow::stackingOrderChanged()
 	qDebug() << __func__;
 }
 
-void ikonized::MainWindow::windowChanged(WId id, unsigned int flags)
+void ikonized::MainWindow::windowChanged(WId /*id*/, unsigned int flags)
 {
 	if (flags & (unsigned int)NET::WMDesktop)
 	{
@@ -624,9 +624,9 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 				QRect r = rect();
 	
 	
-				bool left    = (point.x() - r.left()) < RESIZE_BORDER;
+// 				bool left    = (point.x() - r.left()) < RESIZE_BORDER;
 				bool right   = (r.right() - point.x()) < RESIZE_BORDER;
-				bool top     = (point.y() - r.top()) < RESIZE_BORDER;
+// 				bool top     = (point.y() - r.top()) < RESIZE_BORDER;
 				bool bottom  = (r.bottom() - point.y()) < RESIZE_BORDER;
 	
 				m_ResizeData.ready = true;
