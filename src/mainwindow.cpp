@@ -73,18 +73,17 @@ MainWindow::~MainWindow()
 
 }
 
-void ikonized::MainWindow::paintEvent(QPaintEvent * e)
+void ikonized::MainWindow::paintEvent(QPaintEvent * /*e*/)
 {
 	QPainter painter(this);
 	QPen pen(Qt::black, 2, Qt::SolidLine);
+	QPen penCurrentDesktop(Qt::black, 5, Qt::SolidLine);
 
-	painter.setPen(pen);
-// 	painter.drawLine(20, 40, 250, 40);
-
-	painter.drawText(20, 20, QString::number(m_windowInfo.count()));
+// 	painter.drawText(20, 20, QString::number(m_windowInfo.count()));
 
 	for (int desk=1; desk < m_Desktops.size(); desk++)
 	{
+    	painter.setPen((desk == mCurrentDesktop) ?  penCurrentDesktop : pen);
 		painter.drawRect(m_Desktops[desk].m_OveralRegion);
 	}
 
