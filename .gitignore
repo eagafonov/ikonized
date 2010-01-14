@@ -1,5 +1,6 @@
 .build
 .install
+.mktarball
 obj-build
 debian/tmp
 debian/ikonized
@@ -7,3 +8,4 @@ debian/files
 debian/*.log
 debian/*.debhelper
 debian/*.substvars
+*.tar.bz2

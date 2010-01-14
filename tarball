@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+
+PWD=$(shell pwd)
+
+TEMP=$(shell pwd)/.mktarball
+VERSION=$(shell head -1 debian/changelog  | cut -d' ' -f2 | tr -d \( | tr -d \))
+
+TARBALL_NAME=ikonized-$(VERSION)
+
+CLONE_REPO=$(TEMP)/$(TARBALL_NAME)
+
+show_version:
+	@echo $(VERSION)
+create:
+	rm -Rf $(CLONE_REPO)
+	mkdir -p $(CLONE_REPO)
+	git clone . $(CLONE_REPO)
+	rm -Rf $(CLONE_REPO)/.git  $(CLONE_REPO)/.gitignore $(CLONE_REPO)/tarball
+	cd $(TEMP) && tar -cjf $(PWD)/$(TARBALL_NAME).tar.bz2 $(TARBALL_NAME)
+
