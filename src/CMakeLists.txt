@@ -4,18 +4,24 @@ set(ikonized_SRCS
     ikonized.cpp
     windowinfo.cpp
     mainwindow.cpp
+    optionsdlg.cpp
 )
 
 KDE4_MOC_HEADERS(
     windowinfo.h
     mainwindow.h
+    optionsdlg.h
+)
+
+KDE4_ADD_UI_FILES(ikonized_SRCS
+    optionsdlg.ui
 )
 
 # kde4_automoc( ${ikonized_SRCS} )
 
 add_definitions(-O0 -g)
 
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 KDE4_ADD_EXECUTABLE(ikonized ${ikonized_SRCS})
 # add_executable(ikonized ${ikonized_SRCS})

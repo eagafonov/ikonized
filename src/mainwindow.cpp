@@ -21,6 +21,7 @@
 #include <KShortcut>
 #include <QKeySequence>
 #include <QMessageBox>
+#include "optionsdlg.h"
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -34,6 +35,7 @@ MainWindow::MainWindow()
  , m_bLeftButtonPressed(false)
  , m_State(STATE_IDLE)
  , mActions(this)
+ , mOptionsDlgDisplyed(false)
 {
 	mDesktopCount = KWindowSystem::numberOfDesktops();
 	mCurrentDesktop = KWindowSystem::currentDesktop();
@@ -867,14 +869,17 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
 
 void ikonized::MainWindow::onHotKey()
 {
-	qDebug() << "Hotkey pressed";
+    qDebug() << "Hotkey pressed";
 
-	if (isVisible()) {
-		hide();
-	}
-	else {
-		showNormal();
-	}
+    if (!mOptionsDlgDisplyed)
+    {
+        if (isVisible()) {
+            hide();
+        }
+        else {
+            showNormal();
+        }
+    }
 }
 
 void ikonized::MainWindow::onConfigureDesktops()
@@ -896,4 +901,13 @@ void ikonized::MainWindow::closeEvent(QCloseEvent * event)
 		event->accept();
 	else
 		event->ignore();
+}
+
+void ikonized::MainWindow::menuOptions()
+{
+    OptionsDlg options(this);
+//     options.setObjectName("options");
+    mOptionsDlgDisplyed = true;
+    options.exec();
+    mOptionsDlgDisplyed = false;
 }

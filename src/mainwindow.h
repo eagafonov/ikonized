@@ -43,6 +43,7 @@ public slots:
 
 	void onHotKey();
 	void onConfigureDesktops();
+    void menuOptions();
 
 private:
 	WindowInfoCollection m_windowInfo;
@@ -152,6 +153,9 @@ private:
 	// Tooltip
 	int m_nTooltipDesktop;
     int m_nTooltipIcon;
+
+    // Options
+    bool mOptionsDlgDisplyed;
 
 	// Events from QWidgets
 	virtual void paintEvent( QPaintEvent *e );
