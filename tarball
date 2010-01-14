@@ -5,7 +5,7 @@ PWD=$(shell pwd)
 TEMP=$(shell pwd)/.mktarball
 VERSION=$(shell head -1 debian/changelog  | cut -d' ' -f2 | tr -d \( | tr -d \))
 
-TARBALL_NAME=ikonized-$(VERSION)
+TARBALL_NAME=ikonized_$(VERSION)
 
 CLONE_REPO=$(TEMP)/$(TARBALL_NAME)
 
