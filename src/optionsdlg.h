@@ -15,9 +15,13 @@ public:
 
 protected:
     void changeEvent(QEvent *e);
+    void getValues();
+    void setValues();
 
 private:
     Ui::OptionsDlg *m_ui;
+
+    virtual void accept();
 };
 
 #endif // OPTIONSDLG_H

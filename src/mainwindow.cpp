@@ -22,6 +22,7 @@
 #include <QKeySequence>
 #include <QMessageBox>
 #include "optionsdlg.h"
+#include "globals.h"
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -104,7 +105,11 @@ void ikonized::MainWindow::currentDesktopChanged(int desktop)
 	qDebug() << "Desktop #" << desktop << " activated";
 	mCurrentDesktop = desktop;
 	updateWindowInfo(); //TODO just update image, not window list
-	hide(); // FIXME Use 'show on all desktops' instead
+
+    if (gSettings->value("hide.desktop_changed", true).toBool())
+    {
+        hide(); // FIXME Use 'show on all desktops' instead
+    }
 }
 
 void ikonized::MainWindow::windowAdded(WId /*id*/)

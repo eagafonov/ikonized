@@ -5,12 +5,14 @@ set(ikonized_SRCS
     windowinfo.cpp
     mainwindow.cpp
     optionsdlg.cpp
+    settings.cpp
 )
 
 KDE4_MOC_HEADERS(
     windowinfo.h
     mainwindow.h
     optionsdlg.h
+    settings.h
 )
 
 KDE4_ADD_UI_FILES(ikonized_SRCS

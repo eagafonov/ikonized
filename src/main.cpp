@@ -5,16 +5,23 @@
 
 #include <QDebug>
 
+#include "settings.h"
+
+ikonized::Settings *gSettings = 0;
+
 int main(int argc, char **argv)
 {
-	KAboutData about(QString("ikonized").toLocal8Bit(), QString("ikonized").toLocal8Bit(), KLocalizedString(), QString("0.1").toLocal8Bit());
+    KAboutData about(QString("ikonized").toLocal8Bit(), QString("ikonized").toLocal8Bit(), KLocalizedString(), QString("0.1").toLocal8Bit());
 
-	KCmdLineArgs::init(argc, argv, &about);
+    KCmdLineArgs::init(argc, argv, &about);
 
-	Ikonized app;
+    ikonized::Settings settings;
+    gSettings = &settings;
 
-	app.exec();
+    Ikonized app;
 
-	qDebug() << "Exit";
-	return 0;
+    app.exec();
+
+    qDebug() << "Exit";
+    return 0;
 }
