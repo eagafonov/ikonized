@@ -32,12 +32,15 @@ namespace ikonized {
 MainWindow::MainWindow()
  : QWidget(NULL , Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint/*| Qt::Tool*/)
  , mDesktopCount(3)
+ , mSelfWid(0)
  , mShowAllDesktopWindows(false)
  , m_bLeftButtonPressed(false)
  , m_State(STATE_IDLE)
  , mActions(this)
  , mOptionsDlgDisplyed(false)
 {
+	setWindowTitle("ikonized_main_window");
+
 	mDesktopCount = KWindowSystem::numberOfDesktops();
 	mCurrentDesktop = KWindowSystem::currentDesktop();
 	updateDesktopRegions(size());
@@ -175,6 +178,23 @@ void ikonized::MainWindow::updateWindowInfo()
                                                NET::TopMenuMask | NET::SplashMask | NET::ToolbarMask |
                                                NET::MenuMask);
 
+        if (mSelfWid == 0)
+        {
+        	if (info.visibleName() == windowTitle())
+			{
+				mSelfWid = window;
+				KWindowSystem::setOnAllDesktops(mSelfWid, true);
+			}
+        }
+		else if (mSelfWid == window)
+		{
+			// Check and restore some flags
+			if (!info.onAllDesktops())
+			{
+				KWindowSystem::setOnAllDesktops(mSelfWid, true);
+			}
+            continue;
+		}
         // the reason we don't check for -1 or Net::Unknown here is that legitimate windows, such
         // as some java application windows, may not have a type set for them.
         // apparently sane defaults on properties is beyond the wisdom of x11.

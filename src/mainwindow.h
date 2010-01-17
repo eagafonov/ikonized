@@ -51,6 +51,7 @@ private:
 
 	int mDesktopCount;
 	int mCurrentDesktop;
+	WId mSelfWid;
 	bool mShowAllDesktopWindows;
 
 	void drawContent(QPainter &painter);
