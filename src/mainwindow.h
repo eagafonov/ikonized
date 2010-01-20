@@ -157,6 +157,7 @@ private:
 
     // Options
     bool mOptionsDlgDisplyed;
+    void readSettings();
 
 	// Events from QWidgets
 	virtual void paintEvent( QPaintEvent *e );

@@ -18,6 +18,9 @@ protected:
     void getValues();
     void setValues();
 
+private slots:
+    void iconSizeValueChanged(int size);
+
 private:
     Ui::OptionsDlg *m_ui;
 

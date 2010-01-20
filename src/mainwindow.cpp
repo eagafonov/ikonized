@@ -30,7 +30,7 @@
 namespace ikonized {
 
 MainWindow::MainWindow()
- : QWidget(NULL , Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint/*| Qt::Tool*/)
+ : QWidget(NULL , Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool)
  , mDesktopCount(3)
  , mSelfWid(0)
  , mShowAllDesktopWindows(false)
@@ -55,8 +55,6 @@ MainWindow::MainWindow()
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
 
-	m_IconWidth = 32;	// TODO get icon size from settings
-	m_IconHeight = 32;
 	setMouseTracking(true);
 	mMenuOpen = false;
 
@@ -69,6 +67,8 @@ MainWindow::MainWindow()
 	QKeySequence keys = QKeySequence(Qt::AltModifier + Qt::Key_Space);
 
 	m_nTooltipDesktop = m_nTooltipIcon = -1;
+
+    readSettings();
 }
 
 
@@ -933,6 +933,16 @@ void ikonized::MainWindow::menuOptions()
     OptionsDlg options(this);
 //     options.setObjectName("options");
     mOptionsDlgDisplyed = true;
-    options.exec();
+    int result = options.exec();
     mOptionsDlgDisplyed = false;
+
+    if (QDialog::Accepted == result)
+    {
+        readSettings();
+    }
+}
+
+void ikonized::MainWindow::readSettings()
+{
+    m_IconWidth = m_IconHeight = gSettings->value("icon.size", 32).toInt();
 }

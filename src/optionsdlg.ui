@@ -80,6 +80,73 @@
       </property>
      </widget>
     </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>10</y>
+       <width>251</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Icons</string>
+     </property>
+     <widget class="QSlider" name="iconSizeSlider">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>16</number>
+      </property>
+      <property name="maximum">
+       <number>64</number>
+      </property>
+      <property name="singleStep">
+       <number>16</number>
+      </property>
+      <property name="pageStep">
+       <number>16</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Small</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>146</x>
+        <y>30</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Huge</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QWidget" name="tabAbout">
     <attribute name="title">
