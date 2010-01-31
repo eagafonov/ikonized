@@ -19,7 +19,7 @@
 namespace ikonized {
 
 /**
-	@author 
+    @author 
 */
 class WindowInfo{
 public:
@@ -27,11 +27,11 @@ public:
 
     ~WindowInfo();
 
-	int mDesktop;
-	QString mName;
-	QString mIconName;
-	WId mId;
-	bool mIsAllDesktops;
+    int mDesktop;
+    QString mName;
+    QString mIconName;
+    WId mId;
+    bool mIsAllDesktops;
 };
 
 typedef QList<WindowInfo> WindowInfoCollection;

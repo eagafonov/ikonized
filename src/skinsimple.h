@@ -18,7 +18,7 @@
 namespace ikonized {
 
 /**
-	@author 
+    @author 
 */
 class SkinSimple : public SkinBase
 {

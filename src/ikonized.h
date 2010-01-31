@@ -16,18 +16,18 @@
 #include "mainwindow.h"
 
 /**
-	@author Eugene Agafonov
+    @author Eugene Agafonov
 */
 class Ikonized: public KApplication
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
     Ikonized();
 
     ~Ikonized();
 
 private:
-	ikonized::MainWindow mMainWindow;
+    ikonized::MainWindow mMainWindow;
 };
 
 #endif

@@ -22,11 +22,11 @@ namespace ikonized {
 class SkinBase;
 
 /**
-	@author 
+    @author 
 */
 class MainWindow : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
     MainWindow();
 
@@ -43,21 +43,21 @@ public slots:
     void windowChanged(WId ,unsigned int);
     void showingDesktopChanged(bool);
 
-	void onHotKey();
-	void onConfigureDesktops();
+    void onHotKey();
+    void onConfigureDesktops();
     void menuOptions();
 
 private:
-	WindowInfoCollection m_windowInfo;
-	void updateWindowInfo();
+    WindowInfoCollection m_windowInfo;
+    void updateWindowInfo();
 
-	int mDesktopCount;
-	int mCurrentDesktop;
-	WId mSelfWid;
-	bool mShowAllDesktopWindows;
+    int mDesktopCount;
+    int mCurrentDesktop;
+    WId mSelfWid;
+    bool mShowAllDesktopWindows;
 
-	void drawContent(QPainter &painter);
-	bool getDesktopIconRect(int n, const QRect &outer_rect, QRect &icon_rect);
+    void drawContent(QPainter &painter);
+    bool getDesktopIconRect(int n, const QRect &outer_rect, QRect &icon_rect);
 
 
     typedef struct DESKTOPSTRUCTtag
@@ -71,27 +71,27 @@ private:
 
     QVector<DESKTOPSTRUCT> m_Desktops;
     void updateDesktopRegions(const QSize &size);
-	int  getDesktopByPoint(const QPoint& point);
-	void getDesktopIconByPoint(const QPoint & point,
+    int  getDesktopByPoint(const QPoint& point);
+    void getDesktopIconByPoint(const QPoint & point,
                                int & desktop,
                                int & icon,
                                QPoint * p_icon_drag_point = NULL);
     WId getWindowByDesktopIcon(int desktop, int icon, WindowInfo ** windowInfo = NULL);
 
-	
-	// Icon stuff
-	int m_IconWidth;
-	int m_IconHeight;
+    
+    // Icon stuff
+    int m_IconWidth;
+    int m_IconHeight;
 
-	// Mouse handling stuff
-	QPoint m_MousePressPosition;
-	bool m_bLeftButtonPressed;
+    // Mouse handling stuff
+    QPoint m_MousePressPosition;
+    bool m_bLeftButtonPressed;
 
     class  ResizeData
     {
     public:
         bool ready;
-		QSize original_size;
+        QSize original_size;
         int min_w;
         int min_h;
         
@@ -115,13 +115,13 @@ private:
 
         void reset()
         {
-	           target_window = 0;
+               target_window = 0;
 //             icon = NULL;
         }
     } m_DragData;
 
-	int  setDragMode(WId hTargetWnd, const QPoint &position);
-	void resetDragData(void);
+    int  setDragMode(WId hTargetWnd, const QPoint &position);
+    void resetDragData(void);
 
 
     class  MoveData
@@ -130,7 +130,7 @@ private:
         QPoint old_position;
     } m_MoveData;
 
-	int startWindowMoving(const QPoint & ancor_point);
+    int startWindowMoving(const QPoint & ancor_point);
 
     typedef enum 
     {
@@ -143,32 +143,32 @@ private:
     } STATE_T;
 
     STATE_T m_State;
-	
-	int endWindowMoving(void);
+    
+    int endWindowMoving(void);
 
 
-	// Context menun stuff
-	bool mMenuOpen;
+    // Context menun stuff
+    bool mMenuOpen;
 
-	// hotkeys
-	KActionCollection mActions;
+    // hotkeys
+    KActionCollection mActions;
 
-	// Tooltip
-	int m_nTooltipDesktop;
+    // Tooltip
+    int m_nTooltipDesktop;
     int m_nTooltipIcon;
 
     // Options
     bool mOptionsDlgDisplyed;
     void readSettings();
 
-	// Events from QWidgets
-	virtual void paintEvent( QPaintEvent *e );
-	virtual void resizeEvent (QResizeEvent * event);
-	virtual void mousePressEvent(QMouseEvent * event);
-	virtual void mouseReleaseEvent(QMouseEvent * event);
-	virtual void mouseMoveEvent(QMouseEvent * event);
-	virtual void contextMenuEvent(QContextMenuEvent *event);
-	virtual void closeEvent(QCloseEvent *event);
+    // Events from QWidgets
+    virtual void paintEvent( QPaintEvent *e );
+    virtual void resizeEvent (QResizeEvent * event);
+    virtual void mousePressEvent(QMouseEvent * event);
+    virtual void mouseReleaseEvent(QMouseEvent * event);
+    virtual void mouseMoveEvent(QMouseEvent * event);
+    virtual void contextMenuEvent(QContextMenuEvent *event);
+    virtual void closeEvent(QCloseEvent *event);
 
     // skin 
     SkinBase *m_pSkin;

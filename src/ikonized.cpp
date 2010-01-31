@@ -14,7 +14,7 @@
 Ikonized::Ikonized()
 : KApplication()
 {
-	mMainWindow.show();
+    mMainWindow.show();
 }
 
 
