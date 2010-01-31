@@ -1,28 +1,12 @@
-/**************************************************************************
- *  i-conized - module for Virtual Desktop Manager (virtuawin.sourceforge.net)
- * 
- *  Copyright (c) 2007-2008 Eugene Agafonov
- * 
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
- *  USA.
- * 
- *************************************************************************
- * 
- * Definition of Skin's runtime interface
- *
- **************************************************************************/
+//
+// C++ Interface: SkinBase
+//
+// Description: 
+//
+//
+// Author: Eugene Agafonov <e.a.agafonov@gmail.com> (C) 2010
+//
+// Copyright: See COPYING file that comes with this distribution
 
 #ifndef _SKINBASE_H_
 #define _SKINBASE_H_
