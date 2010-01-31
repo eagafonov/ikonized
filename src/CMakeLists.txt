@@ -6,6 +6,7 @@ set(ikonized_SRCS
     mainwindow.cpp
     optionsdlg.cpp
     settings.cpp
+    skinsimple.cpp
 )
 
 KDE4_MOC_HEADERS(

@@ -19,6 +19,8 @@
 
 namespace ikonized {
 
+class SkinBase;
+
 /**
 	@author 
 */
@@ -167,6 +169,14 @@ private:
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void contextMenuEvent(QContextMenuEvent *event);
 	virtual void closeEvent(QCloseEvent *event);
+
+    // skin 
+    SkinBase *m_pSkin;
+    QSize mCellSize;
+
+    int setSkin(SkinBase *pNewSkin);
+    int updateSkinMetrics();
+    void preparePainter(QPainter &painter, int desktop);
 };
 
 }
