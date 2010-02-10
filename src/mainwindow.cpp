@@ -24,7 +24,7 @@
 #include "optionsdlg.h"
 #include "globals.h"
 #include "skinbase.h"
-#include "skinsimple.h"
+#include "skinsvg.h"
 
 #include <QRect>
 #include <QSize>
@@ -81,7 +81,7 @@ MainWindow::MainWindow()
     readSettings();
 
     // Default skin
-    setSkin(new SkinSimple());
+    setSkin(new SkinSvg());
 }
 
 

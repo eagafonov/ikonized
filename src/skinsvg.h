@@ -1,5 +1,5 @@
 //
-// C++ Interface: skinsimple
+// C++ Interface: skinsvg
 //
 // Description: 
 //
@@ -9,23 +9,23 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef IKONIZEDSKINSIMPLE_H
-#define IKONIZEDSKINSIMPLE_H
+#ifndef IKONIZEDSKINSVG_H
+#define IKONIZEDSKINSVG_H
 
-#include "skinbase.h"
-#include <QSize>
+#include "skinsimple.h"
+#include <QSvgRenderer>
 
 namespace ikonized {
 
 /**
-    @author 
+	@author 
 */
-class SkinSimple : public SkinBase
+class SkinSvg : public SkinSimple
 {
 public:
-    SkinSimple();
+    SkinSvg();
 
-    virtual ~SkinSimple();
+    ~SkinSvg();
     virtual const char *GetName();
 
     // initial metrics
@@ -39,14 +39,8 @@ public:
     // Drawing
     virtual int DrawCellBackground(QPainter &g, bool bActive);
     virtual int DrawCellForeground(QPainter &g, bool bActive);
-
-    // Size
-    virtual int IsSizable();
-    virtual int SetSize(const QSize &size);
-
-protected:
-    QSize mSize;
-    int mBorder;
+private:
+    QSvgRenderer mRenderer;
 };
 
 }
