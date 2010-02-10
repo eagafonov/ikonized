@@ -12,14 +12,33 @@
 #include "skinsvg.h"
 #include <QPainter>
 #include <QDebug>
+#include <QFile>
 
 namespace ikonized {
 
 SkinSvg::SkinSvg()
 {
-    if (!mRenderer.load(QString("skin.svg")))
+    QString skin_filename;
+
+    if (QFile::exists("skin.svg"))
     {
-        qWarning() << "E: Failed to load SVG";
+        skin_filename = "skin.svg";
+    }
+    else if (QFile::exists("/usr/share/ikonized/skins/default/skin.svg"))
+    {
+        skin_filename = "/usr/share/ikonized/skins/default/skin.svg";
+    }
+
+    if (!skin_filename.isEmpty())
+    {
+        if (!mRenderer.load(skin_filename))
+        {
+            qWarning() << "E: Failed to load SVG " << skin_filename;
+        }
+    }
+    else
+    {
+        qWarning() << "Couldn't locate skin SVG file";
     }
 }
 
@@ -84,6 +103,8 @@ int SkinSvg::DrawCellForeground(QPainter & painter, bool bActive)
         mRenderer.render(&painter, bActive ?  "activefg" : "inactivefg", r);
         return 1;
     }
+
+    return 0;
 }
 
 }

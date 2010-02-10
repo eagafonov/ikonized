@@ -1,3 +1,9 @@
+ikonized (0.0.2-pre4) unstable; urgency=low
+
+  * Intial SVG skin support
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Wed, 10 Feb 2010 23:33:03 +0300
+
 ikonized (0.0.2-pre3) unstable; urgency=low
 
   * Configure icon size
