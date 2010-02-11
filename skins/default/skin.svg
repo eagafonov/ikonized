@@ -20,15 +20,15 @@
      id="defs4">
     <linearGradient
        inkscape:collect="always"
-       id="linearGradient5073">
+       id="linearGradient5064">
       <stop
-         style="stop-color:#000000;stop-opacity:0.4159292"
+         style="stop-color:#000000;stop-opacity:0.7167382"
          offset="0"
-         id="stop5075" />
+         id="stop5066" />
       <stop
-         style="stop-color:#000000;stop-opacity:0;"
+         style="stop-color:#000000;stop-opacity:0.18454936"
          offset="1"
-         id="stop5077" />
+         id="stop5068" />
     </linearGradient>
     <linearGradient
        id="linearGradient3602">
@@ -122,12 +122,12 @@
        gradientTransform="translate(-1.5049616,-2.7121143)" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient5073"
+       xlink:href="#linearGradient5064"
        id="linearGradient5161"
-       x1="292.85715"
-       y1="409.50504"
-       x2="185.00002"
-       y2="496.64789"
+       x1="230.71429"
+       y1="409.21542"
+       x2="230.71429"
+       y2="496.93741"
        gradientUnits="userSpaceOnUse"
        spreadMethod="repeat" />
   </defs>
@@ -138,15 +138,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="138.74006"
-     inkscape:cy="685.2012"
+     inkscape:zoom="1.4"
+     inkscape:cx="242.02249"
+     inkscape:cy="666.55439"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="986"
      inkscape:window-height="781"
-     inkscape:window-x="30"
+     inkscape:window-x="47"
      inkscape:window-y="57"
      inkscape:window-maximized="0" />
   <metadata
@@ -186,7 +186,7 @@
        y="240.86142"
        inkscape:label="#rect3610" />
     <rect
-       style="opacity:1;fill:url(#linearGradient5161);fill-opacity:1;stroke:none"
+       style="opacity:0.63519313;fill:url(#linearGradient5161);fill-opacity:1;stroke:none;stroke-width:0.53815632999999996;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-opacity:1"
        id="inactivefg"
        width="290"
        height="87.14286"
