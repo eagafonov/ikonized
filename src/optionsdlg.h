@@ -20,6 +20,7 @@ protected:
 
 private slots:
     void iconSizeValueChanged(int size);
+    void browseSkin(bool);
 
 private:
     Ui::OptionsDlg *m_ui;

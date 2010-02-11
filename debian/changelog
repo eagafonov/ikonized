@@ -1,3 +1,9 @@
+ikonized (0.0.2-pre5) unstable; urgency=low
+
+  * Install skins with 'make install'
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Thu, 11 Feb 2010 17:45:51 +0300
+
 ikonized (0.0.2-pre4) unstable; urgency=low
 
   * Intial SVG skin support

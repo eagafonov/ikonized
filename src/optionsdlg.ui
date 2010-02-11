@@ -147,6 +147,54 @@
       </property>
      </widget>
     </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>461</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Skin</string>
+     </property>
+     <widget class="QLineEdit" name="skinFilenameEdit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>351</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="skinFileBrowseBtn">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>20</y>
+        <width>75</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Browse</string>
+      </property>
+      <property name="autoDefault">
+       <bool>true</bool>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QWidget" name="tabAbout">
     <attribute name="title">

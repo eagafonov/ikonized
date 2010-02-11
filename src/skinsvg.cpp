@@ -16,11 +16,15 @@
 
 namespace ikonized {
 
-SkinSvg::SkinSvg()
+SkinSvg::SkinSvg(const QString &filename)
 {
-    QString skin_filename;
+    QString skin_filename = filename;
 
-    if (QFile::exists("skin.svg"))
+    if (QFile::exists(filename))
+    {
+        skin_filename = filename;
+    }
+    else if (QFile::exists("skin.svg"))
     {
         skin_filename = "skin.svg";
     }

@@ -23,7 +23,7 @@ namespace ikonized {
 class SkinSvg : public SkinSimple
 {
 public:
-    SkinSvg();
+    SkinSvg(const QString &filename);
 
     ~SkinSvg();
     virtual const char *GetName();

@@ -80,8 +80,9 @@ MainWindow::MainWindow()
 
     readSettings();
 
+
     // Default skin
-    setSkin(new SkinSvg());
+    setSkin(new SkinSvg(gSettings->value("skin.filename", "").toString()));
 }
 
 
