@@ -28,5 +28,3 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	make -C $(BUILD_DIR) DESTDIR=$(TOP_DIR)/debian/tmp/usr install
-	mkdir -p $(TOP_DIR)/debian/tmp/usr/share/ikonized/skins
-	cp -R $(TOP_DIR)/skins/* $(TOP_DIR)/debian/tmp/usr/share/ikonized/skins

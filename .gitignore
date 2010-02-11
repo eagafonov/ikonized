@@ -9,3 +9,6 @@ debian/*.log
 debian/*.debhelper
 debian/*.substvars
 *.tar.bz2
+*.kdev*
+Doxyfile
+tags

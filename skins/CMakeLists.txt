@@ -1,0 +1,1 @@
+install(DIRECTORY default DESTINATION ${PREFIX}/share/ikonized/skins)
