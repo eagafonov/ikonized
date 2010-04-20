@@ -86,6 +86,7 @@ private:
     // Mouse handling stuff
     QPoint m_MousePressPosition;
     bool m_bLeftButtonPressed;
+    WId m_hoveredWindow;
 
     class  ResizeData
     {

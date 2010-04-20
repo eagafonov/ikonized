@@ -31,6 +31,7 @@
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
+#define HOVERED_ICON_GROW 4
 
 namespace ikonized {
 
@@ -44,6 +45,7 @@ MainWindow::MainWindow()
  , mSelfWid(0)
  , mShowAllDesktopWindows(false)
  , m_bLeftButtonPressed(false)
+ , m_hoveredWindow(0)
  , m_State(STATE_IDLE)
  , mActions(this)
  , mOptionsDlgDisplyed(false)
@@ -367,11 +369,22 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
 
             if (getDesktopIconRect(icon_index, icons_rect, icon_rect))
             {
+                bool hovered = (m_hoveredWindow != 0) && (iter->mId == m_hoveredWindow);
+                if (hovered)
+                {
+                    icon_rect.adjust(-HOVERED_ICON_GROW, -HOVERED_ICON_GROW, HOVERED_ICON_GROW, HOVERED_ICON_GROW);
+//                     icons_rect.adjust(-3, -3, 3, 3);
+                }
+
                 painter.setClipRect(icons_rect);
+
 
                 // draw an icon
                 // TODO implement pixmap cache
-                QPixmap icon = KWindowSystem::icon(iter->mId, m_IconWidth, m_IconHeight, true);
+
+                QPixmap icon = KWindowSystem::icon(iter->mId, 
+                        hovered ? m_IconWidth + HOVERED_ICON_GROW*2 : m_IconWidth,
+                        hovered ? m_IconHeight + HOVERED_ICON_GROW*2 : m_IconHeight, true);
 
                 painter.drawPixmap(icon_rect, icon);
 
@@ -730,14 +743,21 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
     
                     m_nTooltipDesktop = nDesktop;
                     m_nTooltipIcon    = nIcon;
+
+                    // Grow up icon
+                    m_hoveredWindow = wnd;
+                    updateWindowInfo();
                 }
             }
-            else if (m_nTooltipIcon > 0)
+            else if (m_nTooltipIcon >= 0)
             {
                 qDebug() << "Hide tooltip ";
                 setToolTip(QString());
     
                 m_nTooltipDesktop = m_nTooltipIcon    = -1;
+
+                m_hoveredWindow = 0;
+                updateWindowInfo();
     
             }
     
