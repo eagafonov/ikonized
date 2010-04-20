@@ -3,6 +3,8 @@
 
 #include <QtGui/QDialog>
 
+#include "windowinfo.h"
+
 namespace Ui {
     class OptionsDlg;
 }
@@ -10,7 +12,7 @@ namespace Ui {
 class OptionsDlg : public QDialog {
     Q_OBJECT
 public:
-    OptionsDlg(QWidget *parent = 0);
+    OptionsDlg(const ikonized::WindowInfoCollection &windowInfo, QWidget *parent = 0);
     ~OptionsDlg();
 
 protected:
@@ -24,6 +26,7 @@ private slots:
 
 private:
     Ui::OptionsDlg *m_ui;
+    mutable const ikonized::WindowInfoCollection &m_windowInfo;
 
     virtual void accept();
 };

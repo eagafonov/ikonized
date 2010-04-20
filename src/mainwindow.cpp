@@ -948,7 +948,7 @@ void ikonized::MainWindow::closeEvent(QCloseEvent * event)
 
 void ikonized::MainWindow::menuOptions()
 {
-    OptionsDlg options(this);
+    OptionsDlg options(m_windowInfo, this);
 //     options.setObjectName("options");
     mOptionsDlgDisplyed = true;
     int result = options.exec();

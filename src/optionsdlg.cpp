@@ -4,10 +4,12 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <KWindowSystem>
 
-OptionsDlg::OptionsDlg(QWidget *parent) :
+OptionsDlg::OptionsDlg(const ikonized::WindowInfoCollection &windowInfo, QWidget *parent) :
     QDialog(parent),
-    m_ui(new Ui::OptionsDlg)
+    m_ui(new Ui::OptionsDlg),
+    m_windowInfo(windowInfo)
 {
     m_ui->setupUi(this);
     connect(m_ui->iconSizeSlider, SIGNAL(valueChanged(int)),
@@ -65,6 +67,19 @@ void OptionsDlg::accept()
 void OptionsDlg::iconSizeValueChanged(int size)
 {
     qDebug() << "OPTIONS: Icon size " << size;
+
+    if (m_windowInfo.empty())
+    {
+        QPixmap icon(size, size);
+        icon.fill(Qt::blue);
+
+        m_ui->iconPreview->setPixmap(icon);
+    }
+    else
+    {
+        QPixmap icon = KWindowSystem::icon(m_windowInfo[qrand() % m_windowInfo.size()].mId, size, size, true);
+        m_ui->iconPreview->setPixmap(icon);
+    }
 }
 
 void OptionsDlg::browseSkin(bool)
