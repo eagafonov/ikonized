@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>395</height>
+    <width>671</width>
+    <height>365</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -32,7 +32,7 @@
          <bool>true</bool>
         </property>
         <attribute name="title">
-         <string>Tab 1</string>
+         <string>General</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
@@ -64,88 +64,6 @@
                     </property>
                    </widget>
                   </item>
-                  <item>
-                   <spacer name="verticalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupBox_2">
-               <property name="title">
-                <string>Icons</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_3">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_2">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_3">
-                    <item>
-                     <widget class="QLabel" name="label">
-                      <property name="text">
-                       <string>Small</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="label_2">
-                      <property name="text">
-                       <string>Huge</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-                  </item>
-                  <item>
-                   <widget class="QSlider" name="iconSizeSlider">
-                    <property name="minimum">
-                     <number>16</number>
-                    </property>
-                    <property name="maximum">
-                     <number>64</number>
-                    </property>
-                    <property name="singleStep">
-                     <number>16</number>
-                    </property>
-                    <property name="pageStep">
-                     <number>16</number>
-                    </property>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                  </layout>
                 </item>
                </layout>
@@ -153,6 +71,98 @@
              </item>
             </layout>
            </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Icons</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QLabel" name="label">
+                    <property name="text">
+                     <string>Small</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_2">
+                    <property name="text">
+                     <string>Huge</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+                </item>
+                <item>
+                 <widget class="QSlider" name="iconSizeSlider">
+                  <property name="minimum">
+                   <number>16</number>
+                  </property>
+                  <property name="maximum">
+                   <number>64</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>16</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>16</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabSkins">
+        <attribute name="title">
+         <string>Skin</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
             <widget class="QGroupBox" name="groupBox_3">
              <property name="minimumSize">
@@ -202,7 +212,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_3">
+            <spacer name="verticalSpacer_4">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -220,7 +230,7 @@
        </widget>
        <widget class="QWidget" name="tabAbout">
         <attribute name="title">
-         <string>Tab 2</string>
+         <string>About</string>
         </attribute>
        </widget>
       </widget>
