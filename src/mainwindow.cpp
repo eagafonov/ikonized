@@ -342,6 +342,8 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
     
     QRect icons_rect;
     m_pSkin->GetCellClientRect(icons_rect);
+    QRect icons_rect_hovered(icons_rect);
+    icons_rect_hovered.adjust(-HOVERED_ICON_GROW, -HOVERED_ICON_GROW, HOVERED_ICON_GROW, HOVERED_ICON_GROW);
 
     // loop other windows
     for (WindowInfoCollection::const_iterator iter =  m_windowInfo.begin(); 
@@ -373,10 +375,13 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
                 if (hovered)
                 {
                     icon_rect.adjust(-HOVERED_ICON_GROW, -HOVERED_ICON_GROW, HOVERED_ICON_GROW, HOVERED_ICON_GROW);
-//                     icons_rect.adjust(-3, -3, 3, 3);
-                }
 
-                painter.setClipRect(icons_rect);
+                    painter.setClipRect(icons_rect_hovered);
+                }
+                else
+                {
+                    painter.setClipRect(icons_rect);
+                }
 
 
                 // draw an icon
