@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <KWindowSystem>
+#include <KToolInvocation>
+#include <QMessageBox>
 
 OptionsDlg::OptionsDlg(const ikonized::WindowInfoCollection &windowInfo, QWidget *parent) :
     QDialog(parent),
@@ -17,6 +19,9 @@ OptionsDlg::OptionsDlg(const ikonized::WindowInfoCollection &windowInfo, QWidget
 
     connect(m_ui->skinFileBrowseBtn, SIGNAL(clicked(bool)),
             this, SLOT(browseSkin(bool)));
+
+    connect(m_ui->launchKeyManagerBtn, SIGNAL(clicked(bool)),
+            this, SLOT(launchKeyManagerBtn(bool)));
 
    getValues();
 }
@@ -90,4 +95,25 @@ void OptionsDlg::browseSkin(bool)
              m_ui->skinFilenameEdit, SLOT(setText(QString)));
 
     dlg.exec();
+}
+
+void OptionsDlg::launchKeyManagerBtn(bool )
+{
+  QString error;
+  int err = KToolInvocation::startServiceByDesktopName("keys", QStringList(), &error);
+
+  if (err)
+  {
+        qDebug() << "Key manager launch error" << err << error;
+
+         QMessageBox msgBox;
+         msgBox.setText("ikonized error");
+//          msgBox.setInformativeText(QString("%1\nerror=%2").arg(error).arg(err));
+//          msgBox.setStandardButtons(QMessageBox::Ok);
+//          msgBox.setDefaultButton(QMessageBox::Ok);
+         msgBox.exec();
+  }
+  else
+  {
+  }
 }

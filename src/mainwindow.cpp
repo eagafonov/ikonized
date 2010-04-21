@@ -925,8 +925,11 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
     QAction* actOptions = menu.addAction(tr("Options"));
     connect(actOptions, SIGNAL(triggered()), this, SLOT(menuOptions()));
 
-    QAction* actDesktops = menu.addAction(tr("Desktops"));
+    QAction* actDesktops = menu.addAction(tr("Configure desktops"));
     connect(actDesktops, SIGNAL(triggered()), this, SLOT(onConfigureDesktops()));
+
+    QAction* actShortcuts = menu.addAction(tr("Configure shortcuts"));
+    connect(actShortcuts, SIGNAL(triggered()), this, SLOT(onConfigureShortcuts()));
 
     QAction* actExit = menu.addAction(tr("Exit"));
     connect(actExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -1029,5 +1032,23 @@ int ikonized::MainWindow::updateSkinMetrics()
 void ikonized::MainWindow::preparePainter(QPainter & painter, int desktop)
 {
     painter.setTransform(QTransform::fromTranslate(0, mCellSize.height() * (desktop - 1)), false);
+}
+
+void ikonized::MainWindow::onConfigureShortcuts()
+{
+    QString error;
+
+    int err = KToolInvocation::startServiceByDesktopName("keys", QStringList(), &error);
+    if (err)
+    {
+        qDebug() << "Key manager launch error" << err << error;
+/*
+        QMessageBox msgBox;
+        msgBox.setText("ikonized error");
+        msgBox.setInformativeText(QString("%1\nerror=%2").arg(error).arg(err));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();*/
+    }
 }
 

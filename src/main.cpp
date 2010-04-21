@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 
     Ikonized app;
 
-    app.exec();
+    int ret_val = app.exec();
 
-    qDebug() << "Exit";
-    return 0;
+    qDebug() << "Exit, result=" << ret_val;
+    return ret_val;
 }

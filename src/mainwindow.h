@@ -45,6 +45,7 @@ public slots:
 
     void onHotKey();
     void onConfigureDesktops();
+    void onConfigureShortcuts();
     void menuOptions();
 
 private:
