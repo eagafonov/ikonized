@@ -1,3 +1,10 @@
+ikonized (0.0.2-pre7) unstable; urgency=low
+
+  * Show ClosedHand cursor while window moving
+  * Show PointingHand cursor on hovered icon
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Tue, 04 May 2010 14:55:35 +0400
+
 ikonized (0.0.2-pre6) unstable; urgency=low
 
   * Increment version
