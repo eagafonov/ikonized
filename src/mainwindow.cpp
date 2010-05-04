@@ -718,7 +718,7 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
                 {
     //                 cursor_name = IDC_ARROW;
                     m_ResizeData.ready = false;
-                    unsetCursor();
+//                     unsetCursor();
                 }
     
     //             if (cursor_name && m_ResizeData.last_cursor != cursor_name)
@@ -729,11 +729,11 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
     //                 m_ResizeData.last_cursor = cursor_name;
     //             }
             }
-    
+
             int nDesktop, nIcon;
-    
+
             getDesktopIconByPoint(point, nDesktop, nIcon);
-    
+
             if (nIcon >= 0)
             {
                 /* update */
@@ -741,31 +741,36 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
                     (m_nTooltipIcon != nIcon))
                 {
                     WId wnd = getWindowByDesktopIcon(nDesktop, nIcon);
-    
+
                     QString tooltip = KWindowSystem::windowInfo(wnd, NET::WMName).name();
                     qDebug() << "Show tooltip " << tooltip;
                     setToolTip(tooltip);
-    
+
                     m_nTooltipDesktop = nDesktop;
                     m_nTooltipIcon    = nIcon;
 
                     // Grow up icon
                     m_hoveredWindow = wnd;
                     updateWindowInfo();
+
+                    setCursor(QCursor(Qt::PointingHandCursor));
                 }
             }
             else if (m_nTooltipIcon >= 0)
             {
                 qDebug() << "Hide tooltip ";
                 setToolTip(QString());
-    
+
                 m_nTooltipDesktop = m_nTooltipIcon    = -1;
 
                 m_hoveredWindow = 0;
                 updateWindowInfo();
-    
+                unsetCursor();
             }
-    
+            else if (m_ResizeData.ready == false)
+            {
+                unsetCursor();
+            }
         }
     }
 }
@@ -774,6 +779,7 @@ int ikonized::MainWindow::endWindowMoving(void )
 {
     Q_ASSERT(m_State == STATE_MOVE);
     m_State = STATE_IDLE;
+    unsetCursor();
     return 0;
 }
 
@@ -911,6 +917,8 @@ int ikonized::MainWindow::startWindowMoving(const QPoint & ancor_point)
     m_State = STATE_MOVE;
 
     m_MoveData.old_position = ancor_point;
+
+    setCursor(QCursor(Qt::ClosedHandCursor));
 
     return 0;
 }
