@@ -15,6 +15,6 @@ create:
 	rm -Rf $(CLONE_REPO)
 	mkdir -p $(CLONE_REPO)
 	git clone . $(CLONE_REPO)
-	rm -Rf $(CLONE_REPO)/.git  $(CLONE_REPO)/.gitignore $(CLONE_REPO)/tarball
+	rm -Rf $(CLONE_REPO)/.git  $(CLONE_REPO)/.gitignore $(CLONE_REPO)/tarball $(CLONE_REPO)/buildme
 	cd $(TEMP) && tar -cjf $(PWD)/$(TARBALL_NAME).tar.bz2 $(TARBALL_NAME)
 

@@ -1,0 +1,5 @@
+#!/usr/bin/make -f 
+
+all:
+	MAKE=make\ -j4 dpkg-buildpackage -rfakeroot -b -uc -j4
+	./tarball create show_version
