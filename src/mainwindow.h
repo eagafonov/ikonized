@@ -47,6 +47,7 @@ public slots:
     void onConfigureDesktops();
     void onConfigureShortcuts();
     void menuOptions();
+    void closeWindow();
 
 private:
     WindowInfoCollection m_windowInfo;

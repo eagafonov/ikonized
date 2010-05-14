@@ -29,6 +29,9 @@
 #include <QRect>
 #include <QSize>
 
+#include <QX11Info>
+#include <netwm.h>
+
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
 #define HOVERED_ICON_GROW 4
@@ -928,8 +931,7 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
     qDebug() << "Context menu requested";
 
     QMenu menu(this);
-//     QAction* actMenu = menu.addAction(tr("Rebuild Catalog"));
-//     connect(actMenu, SIGNAL(triggered()), this, SLOT(buildCatalog()));
+
     QAction* actOptions = menu.addAction(tr("Options"));
     connect(actOptions, SIGNAL(triggered()), this, SLOT(menuOptions()));
 
@@ -939,8 +941,14 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
     QAction* actShortcuts = menu.addAction(tr("Configure shortcuts"));
     connect(actShortcuts, SIGNAL(triggered()), this, SLOT(onConfigureShortcuts()));
 
+    if (m_hoveredWindow) {
+        QAction* closeWindow = menu.addAction(tr("Close window"));
+        connect(closeWindow, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    }
+
     QAction* actExit = menu.addAction(tr("Exit"));
     connect(actExit, SIGNAL(triggered()), this, SLOT(close()));
+
     mMenuOpen = true;
     menu.exec(event->globalPos());
     mMenuOpen = false;
@@ -1057,6 +1065,14 @@ void ikonized::MainWindow::onConfigureShortcuts()
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();*/
+    }
+}
+
+void ikonized::MainWindow::closeWindow()
+{
+    if (m_hoveredWindow) {
+        NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
+        ri.closeWindowRequest( m_hoveredWindow );
     }
 }
 
