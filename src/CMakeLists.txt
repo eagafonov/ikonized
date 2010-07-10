@@ -29,6 +29,6 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${C
 
 KDE4_ADD_EXECUTABLE(ikonized ${ikonized_SRCS})
 # add_executable(ikonized ${ikonized_SRCS})
-target_link_libraries(ikonized ${KDE4_KDEUI_LIBS})
+target_link_libraries(ikonized ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
 
 install(TARGETS ikonized DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

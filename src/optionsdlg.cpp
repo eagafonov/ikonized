@@ -3,7 +3,7 @@
 #include "globals.h"
 
 #include <QDebug>
-#include <QFileDialog>
+#include <KFileDialog>
 #include <KWindowSystem>
 #include <KToolInvocation>
 #include <QMessageBox>
@@ -89,12 +89,12 @@ void OptionsDlg::iconSizeValueChanged(int size)
 
 void OptionsDlg::browseSkin(bool)
 {
-    QFileDialog dlg(this, "Select skin", QString(), "*.svg");
-
-    connect (&dlg, SIGNAL(fileSelected(QString)),
-             m_ui->skinFilenameEdit, SLOT(setText(QString)));
-
-    dlg.exec();
+    QString filename = KFileDialog::getOpenFileName(KUrl(), "*.svg", this, "Select skin");
+    
+    if (!filename.isEmpty())
+    {
+       m_ui->skinFilenameEdit->setText(filename);
+    }
 }
 
 void OptionsDlg::launchKeyManagerBtn(bool )
