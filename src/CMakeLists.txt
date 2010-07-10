@@ -31,4 +31,4 @@ KDE4_ADD_EXECUTABLE(ikonized ${ikonized_SRCS})
 # add_executable(ikonized ${ikonized_SRCS})
 target_link_libraries(ikonized ${KDE4_KDEUI_LIBS})
 
-install(TARGETS ikonized DESTINATION ${DESTDIR}/bin)
+install(TARGETS ikonized DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

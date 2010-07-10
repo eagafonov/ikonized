@@ -18,7 +18,7 @@ BUILD_DIR=$(TOP_DIR)/obj-build
 
 override_dh_auto_configure:
 	mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake $(TOP_DIR)
+	cd $(BUILD_DIR) && cmake -DCMAKE_INSTALL_PREFIX=/usr $(TOP_DIR)
 
 override_dh_auto_clean:
 	rm -Rf $(BUILD_DIR)
@@ -27,4 +27,4 @@ override_dh_auto_build:
 	make -C $(BUILD_DIR)
 
 override_dh_auto_install:
-	make -C $(BUILD_DIR) DESTDIR=$(TOP_DIR)/debian/tmp/usr install
+	make -C $(BUILD_DIR) DESTDIR=$(TOP_DIR)/debian/tmp install

@@ -1,1 +1,1 @@
-install(DIRECTORY default DESTINATION ${PREFIX}/share/ikonized/skins)
+install(DIRECTORY default DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ikonized/skins)
