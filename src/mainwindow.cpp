@@ -15,12 +15,13 @@
 #include <KWindowSystem>
 #include <QDebug>
 #include <QResizeEvent>
-#include <QMenu>
+#include <KMenu>
 #include <KToolInvocation>
 #include <KAction>
 #include <KShortcut>
 #include <QKeySequence>
 #include <QMessageBox>
+#include <klocalizedstring.h>
 #include "optionsdlg.h"
 #include "globals.h"
 #include "skinbase.h"
@@ -930,23 +931,23 @@ void ikonized::MainWindow::contextMenuEvent(QContextMenuEvent * event)
 {
     qDebug() << "Context menu requested";
 
-    QMenu menu(this);
+    KMenu menu(this);
 
-    QAction* actOptions = menu.addAction(tr("Options"));
+    QAction* actOptions = menu.addAction(i18nc("Context menu item", "Options"));
     connect(actOptions, SIGNAL(triggered()), this, SLOT(menuOptions()));
 
-    QAction* actDesktops = menu.addAction(tr("Configure desktops"));
+    QAction* actDesktops = menu.addAction(i18nc("Context menu item", "Configure desktops"));
     connect(actDesktops, SIGNAL(triggered()), this, SLOT(onConfigureDesktops()));
 
-    QAction* actShortcuts = menu.addAction(tr("Configure shortcuts"));
+    QAction* actShortcuts = menu.addAction(i18nc("Context menu item", "Configure shortcuts"));
     connect(actShortcuts, SIGNAL(triggered()), this, SLOT(onConfigureShortcuts()));
 
     if (m_hoveredWindow) {
-        QAction* closeWindow = menu.addAction(tr("Close window"));
+        QAction* closeWindow = menu.addAction(i18nc("Context menu item", "Close window"));
         connect(closeWindow, SIGNAL(triggered()), this, SLOT(closeWindow()));
     }
 
-    QAction* actExit = menu.addAction(tr("Exit"));
+    QAction* actExit = menu.addAction(i18nc("Context menu item", "Exit"));
     connect(actExit, SIGNAL(triggered()), this, SLOT(close()));
 
     mMenuOpen = true;
