@@ -5,3 +5,5 @@ find_package(KDE4 4.3.2 REQUIRED)
 add_subdirectory(src)
 add_subdirectory(skins)
 
+message(" * Install prefix is ${CMAKE_INSTALL_PREFIX}")
+

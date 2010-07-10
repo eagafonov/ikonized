@@ -32,12 +32,20 @@ SkinSvg::SkinSvg(const QString &filename)
     {
         skin_filename = "/usr/share/ikonized/skins/default/skin.svg";
     }
+    else if (QFile::exists("/usr/local/share/ikonized/skins/default/skin.svg"))
+    {
+        skin_filename = "/usr/local/share/ikonized/skins/default/skin.svg";
+    }
 
     if (!skin_filename.isEmpty())
     {
-        if (!mRenderer.load(skin_filename))
+        if (mRenderer.load(skin_filename))
         {
-            qWarning() << "E: Failed to load SVG " << skin_filename;
+            qDebug() << "I: Loaded skin " << skin_filename;
+        }
+        else
+        {
+            qWarning() << "Failed to load SVG " << skin_filename;
         }
     }
     else
