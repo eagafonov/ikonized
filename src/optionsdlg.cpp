@@ -48,6 +48,7 @@ void OptionsDlg::getValues()
     Q_ASSERT(gSettings != 0);
 
     m_ui->hideOnChangeDesktop->setChecked(gSettings->value("hide.desktop_changed", true).toBool());
+    m_ui->hideOnActivateWindow->setChecked(gSettings->value("hide.activate_window", true).toBool());
     m_ui->iconSizeSlider->setValue(gSettings->value("icon.size", 32).toInt());
     m_ui->skinFilenameEdit->setText(gSettings->value("skin.filename", "").toString());
 }
@@ -56,6 +57,7 @@ void OptionsDlg::setValues()
 {
     Q_ASSERT(gSettings != 0);
     gSettings->setValue("hide.desktop_changed",m_ui->hideOnChangeDesktop->checkState() == Qt::Checked);
+    gSettings->setValue("hide.activate_window",m_ui->hideOnActivateWindow->checkState() == Qt::Checked);
     gSettings->setValue("icon.size", m_ui->iconSizeSlider->value());
     gSettings->setValue("icon.size", m_ui->iconSizeSlider->value());
 

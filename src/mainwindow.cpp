@@ -128,11 +128,19 @@ void ikonized::MainWindow::windowRemoved(WId )
     updateWindowInfo();
 }
 
-void ikonized::MainWindow::activeWindowChanged(WId )
+void ikonized::MainWindow::activeWindowChanged(WId id)
 {
     qDebug() << __func__;
 
     updateWindowInfo(); //TODO just update image, not window list
+    
+    if (id != mSelfWid && 
+       mOptionsDlgDisplyed == false && 
+       gSettings->value("hide.activate_window", true).toBool())
+    {
+        qDebug() << "Window is activted. hiding.";
+        hide(); // FIXME Use 'show on all desktops' instead
+    }
 }
 
 void ikonized::MainWindow::numberOfDesktopsChanged(int count)
@@ -995,9 +1003,13 @@ void ikonized::MainWindow::menuOptions()
 {
     OptionsDlg options(m_windowInfo, this);
 //     options.setObjectName("options");
+    qDebug() << "Show settings dialog";
     mOptionsDlgDisplyed = true;
     int result = options.exec();
     mOptionsDlgDisplyed = false;
+    qDebug() << "Settings is closed. result: " << result;
+    
+    
 
     if (QDialog::Accepted == result)
     {

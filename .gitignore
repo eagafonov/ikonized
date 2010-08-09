@@ -2,6 +2,7 @@
 .install
 .mktarball
 obj-build
+build
 debian/tmp
 debian/ikonized
 debian/files
