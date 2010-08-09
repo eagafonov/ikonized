@@ -8,3 +8,6 @@ build:
 
 mktarball:
 	./tarball create show_version
+
+.PHONY: build
+
