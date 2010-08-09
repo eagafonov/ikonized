@@ -139,7 +139,7 @@ void ikonized::MainWindow::activeWindowChanged(WId id)
        mOptionsDlgDisplyed == false && 
        gSettings->value("hide.activate_window", true).toBool())
     {
-        qDebug() << "Window is activted. hiding.";
+        qDebug() << "Window" << id << "is activted. hiding";
         hide(); // FIXME Use 'show on all desktops' instead
     }
 }
@@ -162,11 +162,12 @@ void ikonized::MainWindow::stackingOrderChanged()
     qDebug() << __func__;
 }
 
-void ikonized::MainWindow::windowChanged(WId /*id*/, unsigned int flags)
+void ikonized::MainWindow::windowChanged(WId id, unsigned int flags)
 {
-    if (flags & (unsigned int)NET::WMDesktop)
+    if (id != mSelfWid && 
+        (flags & (unsigned int)NET::WMDesktop))
     {
-        qDebug() << __func__ << "Some window was moved from one desktop to another";
+        qDebug() << __func__ << "window " << id << "was moved from one desktop to another. flags:" << flags;
         updateWindowInfo();
     }
 }
