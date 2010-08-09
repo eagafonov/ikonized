@@ -161,7 +161,6 @@ private:
     int m_nTooltipIcon;
 
     // Options
-    bool mOptionsDlgDisplyed;
     void readSettings();
 
     // Events from QWidgets
@@ -176,6 +175,7 @@ private:
     // skin 
     SkinBase *m_pSkin;
     QSize mCellSize;
+    bool mDialogIsShown;
 
     int setSkin(SkinBase *pNewSkin);
     int updateSkinMetrics();

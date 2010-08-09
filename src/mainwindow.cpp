@@ -53,8 +53,8 @@ MainWindow::MainWindow()
  , m_hoveredWindow(0)
  , m_State(STATE_IDLE)
  , mActions(this)
- , mOptionsDlgDisplyed(false)
  , m_pSkin(0)
+ , mDialogIsShown(false)
 {
     setWindowTitle("ikonized_main_window");
 
@@ -136,7 +136,7 @@ void ikonized::MainWindow::activeWindowChanged(WId id)
     updateWindowInfo(); //TODO just update image, not window list
     
     if (id != mSelfWid && 
-       mOptionsDlgDisplyed == false && 
+       mDialogIsShown == false &&
        gSettings->value("hide.activate_window", true).toBool())
     {
         qDebug() << "Window" << id << "is activted. hiding";
@@ -969,7 +969,7 @@ void ikonized::MainWindow::onHotKey()
 {
     qDebug() << "Hotkey pressed";
 
-    if (!mOptionsDlgDisplyed)
+    if (!mDialogIsShown)
     {
         if (isVisible()) {
             hide();
@@ -997,6 +997,7 @@ void ikonized::MainWindow::closeEvent(QCloseEvent * event)
     msgBox.setDefaultButton(QMessageBox::Cancel);
     
 
+    mDialogIsShown = true;
     if (msgBox.exec() == QMessageBox::Ok)
     {
         qDebug() << "Quiting is accepted";
@@ -1008,6 +1009,7 @@ void ikonized::MainWindow::closeEvent(QCloseEvent * event)
         qDebug() << "Quiting is declined";
         event->ignore();
     }
+    mDialogIsShown = true;
 }
 
 void ikonized::MainWindow::menuOptions()
@@ -1015,9 +1017,9 @@ void ikonized::MainWindow::menuOptions()
     OptionsDlg options(m_windowInfo, this);
 //     options.setObjectName("options");
     qDebug() << "Show settings dialog";
-    mOptionsDlgDisplyed = true;
+    mDialogIsShown = true;
     int result = options.exec();
-    mOptionsDlgDisplyed = false;
+    mDialogIsShown = false;
     qDebug() << "Settings is closed. result: " << result;
     
     
