@@ -26,6 +26,7 @@
 #include "globals.h"
 #include "skinbase.h"
 #include "skinsvg.h"
+#include <QCoreApplication>
 
 #include <QRect>
 #include <QSize>
@@ -986,17 +987,26 @@ void ikonized::MainWindow::onConfigureDesktops()
 
 void ikonized::MainWindow::closeEvent(QCloseEvent * event)
 {
-    QMessageBox msgBox;
-    msgBox.setText("Close ikonized");
-    msgBox.setInformativeText("Do you want to close ikonized?");
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    QMessageBox msgBox(QMessageBox::Question, 
+                       "Close ikonized",
+                       "Do you want to close ikonized?",
+                       QMessageBox::Ok | QMessageBox::Cancel,
+                       this);
+                       
     msgBox.setDefaultButton(QMessageBox::Cancel);
     
 
     if (msgBox.exec() == QMessageBox::Ok)
+    {
+        qDebug() << "Quiting is accepted";
         event->accept();
+        QCoreApplication::instance()->quit();
+    }
     else
+    {
+        qDebug() << "Quiting is declined";
         event->ignore();
+    }
 }
 
 void ikonized::MainWindow::menuOptions()
