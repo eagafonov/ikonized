@@ -21,13 +21,15 @@ KDE4_ADD_UI_FILES(ikonized_SRCS
     optionsdlg.ui
 )
 
+QT4_ADD_RESOURCES(ikonized_RC_SRCS ikonized.qrc)
+
 # kde4_automoc( ${ikonized_SRCS} )
 
 add_definitions(-O0 -g)
 
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
-KDE4_ADD_EXECUTABLE(ikonized ${ikonized_SRCS})
+KDE4_ADD_EXECUTABLE(ikonized ${ikonized_SRCS} ${ikonized_RC_SRCS})
 # add_executable(ikonized ${ikonized_SRCS})
 target_link_libraries(ikonized ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
 

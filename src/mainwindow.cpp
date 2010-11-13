@@ -30,6 +30,7 @@
 
 #include <QRect>
 #include <QSize>
+#include <Qt>
 
 #include <QX11Info>
 #include <netwm.h>
@@ -55,6 +56,8 @@ MainWindow::MainWindow()
  , mActions(this)
  , m_pSkin(0)
  , mDialogIsShown(false)
+ , mAltPressed(false)
+ , mCtrlPressed(false)
 {
     setWindowTitle("ikonized_main_window");
 
@@ -579,21 +582,29 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
     
             if (win > 0)
             {
-                qDebug() << "Activate window" << win;
-    
-                // access window...
-                KWindowSystem::forceActiveWindow(win);
-    
-                if (KWindowSystem::windowInfo(win, NET::WMState | NET::XAWMState).isMinimized())
+                if (mAltPressed && mCtrlPressed)
                 {
-                    KWindowSystem::raiseWindow(win);
+                    qDebug() << "Killing window" << win;
+                    closeWindow();
                 }
-                
-//                 if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
-//                    !(m_HideData.m_AutohideForced))
-//                 {
-//                     ShowWindow(SW_HIDE);
-//                 }
+                else
+                {
+                    qDebug() << "Activate window" << win;
+        
+                    // access window...
+                    KWindowSystem::forceActiveWindow(win);
+        
+                    if (KWindowSystem::windowInfo(win, NET::WMState | NET::XAWMState).isMinimized())
+                    {
+                        KWindowSystem::raiseWindow(win);
+                    }
+                    
+    //                 if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
+    //                    !(m_HideData.m_AutohideForced))
+    //                 {
+    //                     ShowWindow(SW_HIDE);
+    //                 }
+                }
                 
             }
         }
@@ -603,6 +614,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 {
     QPoint point(event->pos());
+//     qDebug() << point;
     
     static QPoint PrevPosition;
 
@@ -613,7 +625,7 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
     }
 
     PrevPosition = point;
-
+    
     if (m_State == STATE_MOVE) // continue moving
     {
         QPoint shift = point - m_MoveData.old_position;
@@ -766,8 +778,17 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
                     // Grow up icon
                     m_hoveredWindow = wnd;
                     updateWindowInfo();
-
-                    setCursor(QCursor(Qt::PointingHandCursor));
+                    
+                    if (mAltPressed && mCtrlPressed)
+                    {
+                        QPixmap cursor(QPixmap(QLatin1String(":/data/closewindow_cursor.png")).scaledToHeight(16, Qt::SmoothTransformation));
+                        
+                        setCursor(QCursor(cursor, cursor.width() / 2, cursor.height() / 2));
+                    }
+                    else
+                    {
+                        setCursor(QCursor(Qt::PointingHandCursor));
+                    }
                 }
             }
             else if (m_nTooltipIcon >= 0)
@@ -1102,3 +1123,47 @@ void ikonized::MainWindow::closeWindow()
     }
 }
 
+void ikonized::MainWindow::keyPressEvent(QKeyEvent* event)
+{
+    qDebug() << "Key press";
+    
+    if (event->key() == Qt::Key_Alt)
+    {
+        mAltPressed = true;
+    }
+
+    if (event->key() == Qt::Key_Control)
+    {
+        mCtrlPressed = true;
+    }
+    
+    QWidget::keyPressEvent(event);
+}
+
+void ikonized::MainWindow::keyReleaseEvent(QKeyEvent* event)
+{
+    qDebug() << "Key release";
+
+    if (event->key() == Qt::Key_Alt)
+    {
+        mAltPressed = false;
+    }
+
+    if (event->key() == Qt::Key_Control)
+    {
+        mCtrlPressed = false;
+    }
+
+    QWidget::keyReleaseEvent(event);
+}
+
+void ikonized::MainWindow::enterEvent(QEvent* event)
+{
+    if (!hasFocus())
+    {
+        qDebug() << "Activating";
+        activateWindow();
+    }
+    
+    QWidget::enterEvent(event);
+}

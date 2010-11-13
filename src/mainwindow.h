@@ -171,11 +171,16 @@ private:
     virtual void mouseMoveEvent(QMouseEvent * event);
     virtual void contextMenuEvent(QContextMenuEvent *event);
     virtual void closeEvent(QCloseEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
+    virtual void enterEvent(QEvent *event);
 
     // skin 
     SkinBase *m_pSkin;
     QSize mCellSize;
     bool mDialogIsShown;
+    bool mAltPressed;
+    bool mCtrlPressed;
 
     int setSkin(SkinBase *pNewSkin);
     int updateSkinMetrics();
