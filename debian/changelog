@@ -1,3 +1,9 @@
+ikonized (0.0.2-pre11) unstable; urgency=low
+
+  * Close windows with Ctrl-Alt-Click (initial implementation)
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Wed, 24 Nov 2010 13:44:40 +0300
+
 ikonized (0.0.2-pre10) unstable; urgency=low
 
   * Initial implementation of 'hide-when-window-is-changed' functionality
