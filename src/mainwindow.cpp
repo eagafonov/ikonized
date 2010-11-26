@@ -1125,6 +1125,7 @@ void ikonized::MainWindow::closeWindow()
 
 void ikonized::MainWindow::keyPressEvent(QKeyEvent* event)
 {
+    bool killMode = mAltPressed && mCtrlPressed;
     qDebug() << "Key press";
     
     if (event->key() == Qt::Key_Alt)
@@ -1136,12 +1137,21 @@ void ikonized::MainWindow::keyPressEvent(QKeyEvent* event)
     {
         mCtrlPressed = true;
     }
-    
+
+    // check if cursor need to be updated
+    if (killMode ^ (mAltPressed && mCtrlPressed))
+    {
+        killMode = mAltPressed && mCtrlPressed;
+        qDebug() << "Kill-mode: " << killMode;
+    }
+
     QWidget::keyPressEvent(event);
 }
 
 void ikonized::MainWindow::keyReleaseEvent(QKeyEvent* event)
 {
+    bool killMode = mAltPressed && mCtrlPressed;
+    
     qDebug() << "Key release";
 
     if (event->key() == Qt::Key_Alt)
@@ -1153,6 +1163,13 @@ void ikonized::MainWindow::keyReleaseEvent(QKeyEvent* event)
     {
         mCtrlPressed = false;
     }
+    
+    // check if cursor need to be updated
+    if (killMode ^ (mAltPressed && mCtrlPressed))
+    {
+        killMode = mAltPressed && mCtrlPressed;
+        qDebug() << "Kill-mode: " << killMode;
+    }
 
     QWidget::keyReleaseEvent(event);
 }
@@ -1161,9 +1178,10 @@ void ikonized::MainWindow::enterEvent(QEvent* event)
 {
     if (!hasFocus())
     {
+        mAltPressed = mCtrlPressed = false; // reset kill mode
         qDebug() << "Activating";
         activateWindow();
     }
-    
+     
     QWidget::enterEvent(event);
 }
