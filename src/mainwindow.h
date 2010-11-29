@@ -179,12 +179,12 @@ private:
     SkinBase *m_pSkin;
     QSize mCellSize;
     bool mDialogIsShown;
-    bool mAltPressed;
-    bool mCtrlPressed;
 
     int setSkin(SkinBase *pNewSkin);
     int updateSkinMetrics();
     void preparePainter(QPainter &painter, int desktop);
+    bool killMode();
+    void checkCursor();
 };
 
 }

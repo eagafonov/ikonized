@@ -26,7 +26,8 @@
 #include "globals.h"
 #include "skinbase.h"
 #include "skinsvg.h"
-#include <QCoreApplication>
+#include <QApplication>
+
 
 #include <QRect>
 #include <QSize>
@@ -56,8 +57,6 @@ MainWindow::MainWindow()
  , mActions(this)
  , m_pSkin(0)
  , mDialogIsShown(false)
- , mAltPressed(false)
- , mCtrlPressed(false)
 {
     setWindowTitle("ikonized_main_window");
 
@@ -552,7 +551,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
     else if (m_State == STATE_RESIZE)
     {
         m_State = STATE_IDLE;
-        unsetCursor();
+        checkCursor();
     }
     else
     {
@@ -582,7 +581,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
     
             if (win > 0)
             {
-                if (mAltPressed && mCtrlPressed)
+                if (killMode())
                 {
                     qDebug() << "Killing window" << win;
                     closeWindow();
@@ -778,17 +777,8 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
                     // Grow up icon
                     m_hoveredWindow = wnd;
                     updateWindowInfo();
-                    
-                    if (mAltPressed && mCtrlPressed)
-                    {
-                        QPixmap cursor(QPixmap(QLatin1String(":/data/closewindow_cursor.png")).scaledToHeight(16, Qt::SmoothTransformation));
-                        
-                        setCursor(QCursor(cursor, cursor.width() / 2, cursor.height() / 2));
-                    }
-                    else
-                    {
-                        setCursor(QCursor(Qt::PointingHandCursor));
-                    }
+
+                    checkCursor();
                 }
             }
             else if (m_nTooltipIcon >= 0)
@@ -800,11 +790,11 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 
                 m_hoveredWindow = 0;
                 updateWindowInfo();
-                unsetCursor();
+                checkCursor();
             }
             else if (m_ResizeData.ready == false)
             {
-                unsetCursor();
+                checkCursor();
             }
         }
     }
@@ -814,7 +804,7 @@ int ikonized::MainWindow::endWindowMoving(void )
 {
     Q_ASSERT(m_State == STATE_MOVE);
     m_State = STATE_IDLE;
-    unsetCursor();
+    checkCursor();
     return 0;
 }
 
@@ -925,9 +915,8 @@ int  ikonized::MainWindow::setDragMode(WId hTargetWnd, const QPoint &position)
     m_DragData.target_window = hTargetWnd;
 
     m_DragData.position = position - m_DragData.icon_point;
-
-    QCursor cursor(KWindowSystem::icon(hTargetWnd, m_IconWidth, m_IconHeight, true), m_DragData.icon_point.x(), m_DragData.icon_point.y());
-    setCursor(cursor);
+    
+    checkCursor();
 
     return 0;
 };
@@ -941,7 +930,7 @@ void ikonized::MainWindow::resetDragData(void)
 
         // reset drag state
         m_DragData.reset();
-        unsetCursor();
+        checkCursor();
     }
 }
 
@@ -952,8 +941,8 @@ int ikonized::MainWindow::startWindowMoving(const QPoint & ancor_point)
     m_State = STATE_MOVE;
 
     m_MoveData.old_position = ancor_point;
-
-    setCursor(QCursor(Qt::ClosedHandCursor));
+    
+    checkCursor();
 
     return 0;
 }
@@ -1125,63 +1114,70 @@ void ikonized::MainWindow::closeWindow()
 
 void ikonized::MainWindow::keyPressEvent(QKeyEvent* event)
 {
-    bool killMode = mAltPressed && mCtrlPressed;
-    qDebug() << "Key press";
-    
-    if (event->key() == Qt::Key_Alt)
-    {
-        mAltPressed = true;
-    }
-
-    if (event->key() == Qt::Key_Control)
-    {
-        mCtrlPressed = true;
-    }
-
-    // check if cursor need to be updated
-    if (killMode ^ (mAltPressed && mCtrlPressed))
-    {
-        killMode = mAltPressed && mCtrlPressed;
-        qDebug() << "Kill-mode: " << killMode;
-    }
-
     QWidget::keyPressEvent(event);
+    
+    checkCursor();
 }
 
 void ikonized::MainWindow::keyReleaseEvent(QKeyEvent* event)
 {
-    bool killMode = mAltPressed && mCtrlPressed;
-    
-    qDebug() << "Key release";
-
-    if (event->key() == Qt::Key_Alt)
-    {
-        mAltPressed = false;
-    }
-
-    if (event->key() == Qt::Key_Control)
-    {
-        mCtrlPressed = false;
-    }
-    
-    // check if cursor need to be updated
-    if (killMode ^ (mAltPressed && mCtrlPressed))
-    {
-        killMode = mAltPressed && mCtrlPressed;
-        qDebug() << "Kill-mode: " << killMode;
-    }
-
     QWidget::keyReleaseEvent(event);
+    checkCursor();
 }
 
 void ikonized::MainWindow::enterEvent(QEvent* event)
 {
     if (!hasFocus())
     {
-        mAltPressed = mCtrlPressed = false; // reset kill mode
         qDebug() << "Activating";
         activateWindow();
     }
      
     QWidget::enterEvent(event);
 }
+
+bool ikonized::MainWindow::killMode()
+{
+    return (QApplication::keyboardModifiers() & Qt::AltModifier) && (QApplication::keyboardModifiers() & Qt::ControlModifier);
+}
+
+void ikonized::MainWindow::checkCursor()
+{
+    static bool kc = false;
+    
+    bool km = killMode();
+    if (km)
+    {
+        if (kc == false)
+        {
+            qDebug()  << "Set kill cursor";
+            QPixmap cursor(QPixmap(QLatin1String(":/data/closewindow_cursor.png")).scaledToHeight(16, Qt::SmoothTransformation));
+
+            setCursor(QCursor(cursor, cursor.width() / 2, cursor.height() / 2));
+            kc = true;
+        }
+    }
+    else if (m_State == STATE_MOVE)
+    {
+        setCursor(QCursor(Qt::ClosedHandCursor));
+        kc = false;
+    }
+    else if (m_State == STATE_DRAG_ICON)
+    {
+        QCursor cursor(KWindowSystem::icon(m_DragData.target_window, m_IconWidth, m_IconHeight, true), m_DragData.icon_point.x(), m_DragData.icon_point.y());
+        setCursor(cursor);
+        kc = false;
+    }
+    else if (m_hoveredWindow)
+    {
+        setCursor(QCursor(Qt::PointingHandCursor));
+        kc = false;
+    }
+    else
+    {
+        qDebug()  << "Unset cursor";
+        unsetCursor();
+        kc = false;
+    }
+}
+
