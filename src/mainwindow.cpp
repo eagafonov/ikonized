@@ -612,6 +612,12 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 
 void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 {
+    if (!hasFocus())
+    {
+        qDebug() << "Activating";
+        activateWindow();
+    }
+    
     QPoint point(event->pos());
 //     qDebug() << point;
     
