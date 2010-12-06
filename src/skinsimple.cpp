@@ -51,34 +51,26 @@ int SkinSimple::GetMinCellSize(QSize & cell_size)
     return 1;
 }
 
-int SkinSimple::GetCellClientRect(QRect & client_rect)
+int SkinSimple::GetCellClientRect(const QSize &size, QRect & client_rect)
 {
     client_rect = QRect(mBorder, mBorder,
-                      mSize.width() - mBorder * 2,
-                      mSize.height() - mBorder * 2);
+                      size.width() - mBorder * 2,
+                      size.height() - mBorder * 2);
 
     return 1;
 }
 
-int SkinSimple::GetCellRect(QRect & cell_rect)
-{
-    cell_rect = QRect(QPoint(0, 0), mSize);
-
-    return 1;
-}
-
-int SkinSimple::DrawCellBackground(QPainter & painter, bool bActive)
+int SkinSimple::DrawCellBackground(QPainter & painter, bool bActive, const QSize &size)
 {
 //  painter.drawText(20, 20, QString::number(m_windowInfo.count()));
 
-    QRect r;
-    GetCellRect(r);
+    QRect r(QPoint(0,0), size);
 
     painter.setPen(QPen(Qt::black, bActive ? 5 : 2, Qt::SolidLine));
     painter.drawRect(r);
 
     QRect icons;
-    GetCellClientRect(r);
+    GetCellClientRect(size, r);
 
     painter.setPen(QPen(Qt::black, 1, Qt::DotLine));
     painter.drawRect(r);
@@ -86,7 +78,7 @@ int SkinSimple::DrawCellBackground(QPainter & painter, bool bActive)
     return 1;
 }
 
-int SkinSimple::DrawCellForeground(QPainter & /*g*/, bool /*bActive*/)
+int SkinSimple::DrawCellForeground(QPainter & g, bool bActive, const QSize &size)
 {
     return 1;
 }

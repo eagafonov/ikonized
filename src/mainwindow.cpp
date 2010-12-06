@@ -266,38 +266,37 @@ void ikonized::MainWindow::updateWindowInfo()
 
 const int cell_frame=5;
 
-void ikonized::MainWindow::updateDesktopRegions(const QSize &/*size*/)
+void ikonized::MainWindow::updateDesktopRegions(const QSize &size)
 {
     // desktiop IDs is 1-based
+    
     m_Desktops.resize(mDesktopCount + 1);
+    int baseHeight = size.height() / mDesktopCount;
+    int overHeightCellCount = size.height() % mDesktopCount;
+    QPoint cellPosition(0, 0);
 
-    QRect cell_rect;
-    QRect icont_rect;
-
-    if (m_pSkin != 0)
-    {
-        m_pSkin->GetCellRect(cell_rect);
-        m_pSkin->GetCellClientRect(icont_rect);
-    }
-    else
-    {
-        cell_rect = QRect(QPoint(0, 0), mCellSize);
-        icont_rect = QRect(QPoint(0, 0), mCellSize);
-    }
-
-    for (int desk=0; desk <= mDesktopCount; desk++)
+    for (int desk=1; desk <= mDesktopCount; desk++)
     {
         size_t hash = 0;
 
         if (m_pSkin != 0)
         {
-            // TODO desktop layout
-            m_Desktops[desk].m_OveralRegion = cell_rect;
-            m_Desktops[desk].m_OveralRegion.translate(0, mCellSize.height() * (desk - 1));
-
-            // TODO desktop layout
-            m_Desktops[desk].m_InnerRegion = icont_rect;
-            m_Desktops[desk].m_InnerRegion.translate(0, mCellSize.height() * (desk - 1));
+            // Calculate cell size
+            int cellHeight = baseHeight; 
+            
+            if (desk <= overHeightCellCount)
+            {
+                cellHeight++;
+            }
+            
+            m_Desktops[desk].m_OveralRegion = QRect(cellPosition, QSize(size.width(), cellHeight));
+            
+            m_pSkin->GetCellClientRect(m_Desktops[desk].m_OveralRegion.size(), m_Desktops[desk].m_InnerRegion);
+            m_Desktops[desk].m_InnerRegion.translate(m_Desktops[desk].m_OveralRegion.topLeft());
+            
+            cellPosition += QPoint(m_Desktops[desk].m_OveralRegion.width(), m_Desktops[desk].m_OveralRegion.height()); // Adjust next cell position
+            
+//             qDebug() << "Desktop d=" << desk << m_Desktops[desk].m_OveralRegion;
         }
 
         //Fixed size reg
@@ -327,14 +326,6 @@ void ikonized::MainWindow::updateDesktopRegions(const QSize &/*size*/)
 
 void ikonized::MainWindow::resizeEvent(QResizeEvent * event)
 {
-    mCellSize.setWidth(event->size().width());
-    mCellSize.setHeight(event->size().height() / mDesktopCount);
-
-    if (m_pSkin != 0)
-    {
-        m_pSkin->SetSize(mCellSize);
-    }
-
     updateDesktopRegions(event->size());
 }
 
@@ -353,13 +344,8 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
         m_Desktops[d].m_nWindowsCount = 0;
 
         preparePainter(painter, d);
-        m_pSkin->DrawCellBackground(painter, (mCurrentDesktop == d));
+        m_pSkin->DrawCellBackground(painter, (mCurrentDesktop == d), m_Desktops[d].m_OveralRegion.size());
     }
-    
-    QRect icons_rect;
-    m_pSkin->GetCellClientRect(icons_rect);
-    QRect icons_rect_hovered(icons_rect);
-    icons_rect_hovered.adjust(-HOVERED_ICON_GROW, -HOVERED_ICON_GROW, HOVERED_ICON_GROW, HOVERED_ICON_GROW);
 
     // loop other windows
     for (WindowInfoCollection::const_iterator iter =  m_windowInfo.begin(); 
@@ -368,7 +354,6 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
     {
         // check that window is on some desktop
         int nDesktop = iter->mDesktop;
-        preparePainter(painter, nDesktop);
 
         if (nDesktop > 0 && (nDesktop <= mDesktopCount))
         {
@@ -380,8 +365,15 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
                 continue;
             }
 
+            preparePainter(painter, nDesktop);
+
             // set clipping to inner region 
             Q_ASSERT(nDesktop < m_Desktops.size());
+            
+            QRect icons_rect;
+            m_pSkin->GetCellClientRect(m_Desktops[nDesktop].m_OveralRegion.size(), icons_rect);
+            QRect icons_rect_hovered(icons_rect);
+            icons_rect_hovered.adjust(-HOVERED_ICON_GROW, -HOVERED_ICON_GROW, HOVERED_ICON_GROW, HOVERED_ICON_GROW);
             
             int icon_index = (m_Desktops[nDesktop].m_nWindowsCount++);
 
@@ -436,7 +428,7 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
     for (int d=1; d <= mDesktopCount; d++)
     {
         preparePainter(painter, d);
-        m_pSkin->DrawCellForeground(painter, (mCurrentDesktop == d));
+        m_pSkin->DrawCellForeground(painter, (mCurrentDesktop == d), m_Desktops[d].m_OveralRegion.size());
     }
 }
 
@@ -1089,7 +1081,7 @@ int ikonized::MainWindow::updateSkinMetrics()
 
 void ikonized::MainWindow::preparePainter(QPainter & painter, int desktop)
 {
-    painter.setTransform(QTransform::fromTranslate(0, mCellSize.height() * (desktop - 1)), false);
+    painter.setTransform(QTransform::fromTranslate(0, m_Desktops[desktop].m_OveralRegion.top()), false); // FIXME
 }
 
 void ikonized::MainWindow::onConfigureShortcuts()
@@ -1186,4 +1178,3 @@ void ikonized::MainWindow::checkCursor()
         kc = false;
     }
 }
-

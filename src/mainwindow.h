@@ -177,7 +177,6 @@ private:
 
     // skin 
     SkinBase *m_pSkin;
-    QSize mCellSize;
     bool mDialogIsShown;
 
     int setSkin(SkinBase *pNewSkin);

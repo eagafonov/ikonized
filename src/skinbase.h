@@ -30,12 +30,11 @@ public:
     virtual int GetMinCellSize(QSize &window_size) = 0;
 
     // current metrics
-    virtual int GetCellClientRect(QRect & client_rect) = 0;
-    virtual int GetCellRect(QRect & cell_rect) = 0;
+    virtual int GetCellClientRect(const QSize &cell_size, QRect & client_rect) = 0;
 
     // Drawing
-    virtual int DrawCellBackground(QPainter &g, bool bActive) = 0;
-    virtual int DrawCellForeground(QPainter &g, bool bActive) = 0;
+    virtual int DrawCellBackground(QPainter &g, bool bActive, const QSize &size) = 0;
+    virtual int DrawCellForeground(QPainter &g, bool bActive, const QSize &size) = 0;
 
     // Size
     virtual int IsSizable() = 0;

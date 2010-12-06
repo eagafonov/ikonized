@@ -79,39 +79,32 @@ int SkinSvg::GetMinCellSize(QSize & cell_size)
     return 1;
 }
 
-int SkinSvg::GetCellClientRect(QRect & client_rect)
+int SkinSvg::GetCellClientRect(const QSize &size, QRect & client_rect)
 {
     client_rect = QRect(mBorder, mBorder,
-                      mSize.width() - mBorder * 2,
-                      mSize.height() - mBorder * 2);
+                      size.width() - mBorder * 2,
+                      size.height() - mBorder * 2);
 
     return 1;
 }
 
-int SkinSvg::GetCellRect(QRect & cell_rect)
-{
-    cell_rect = QRect(QPoint(0, 0), mSize);
-
-    return 1;
-}
-
-int SkinSvg::DrawCellBackground(QPainter & painter, bool bActive)
+int SkinSvg::DrawCellBackground(QPainter & painter, bool bActive, const QSize &size)
 {
     if (mRenderer.isValid())
     {
-        QRectF r(0,0, mSize.width(), mSize.height());
+        QRectF r(0,0, size.width(), size.height());
         mRenderer.render(&painter, bActive ?  "activebg" : "inactivebg", r);
         return 1;
     }
     else
-        return SkinSimple::DrawCellBackground(painter, bActive);
+        return SkinSimple::DrawCellBackground(painter, bActive, size);
 }
 
-int SkinSvg::DrawCellForeground(QPainter & painter, bool bActive)
+int SkinSvg::DrawCellForeground(QPainter & painter, bool bActive, const QSize &size)
 {
     if (mRenderer.isValid())
     {
-        QRectF r(0,0, mSize.width(), mSize.height());
+        QRectF r(0,0, size.width(), size.height());
         mRenderer.render(&painter, bActive ?  "activefg" : "inactivefg", r);
         return 1;
     }
