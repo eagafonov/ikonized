@@ -1,7 +1,7 @@
 //
 // C++ Implementation: mainwindow
 //
-// Description: 
+// Description:
 //
 //
 // Author: Eugene Agafonov <e.a.agafonov@gmail.com> (C) 2010
@@ -78,7 +78,7 @@ MainWindow::MainWindow()
     mMenuOpen = false;
 
 
-    // Initial hotkey FIXME get from configuration 
+    // Initial hotkey FIXME get from configuration
     KAction *hideShowAction = mActions.addAction("Hide/Show", this, SLOT(onHotKey()));
 
     hideShowAction->setGlobalShortcut(KShortcut(QKeySequence(Qt::AltModifier + Qt::Key_Space)));
@@ -136,8 +136,8 @@ void ikonized::MainWindow::activeWindowChanged(WId id)
     qDebug() << __func__;
 
     updateWindowInfo(); //TODO just update image, not window list
-    
-    if (id != mSelfWid && 
+
+    if (id != mSelfWid &&
        mDialogIsShown == false &&
        gSettings->value("hide.activate_window", true).toBool())
     {
@@ -166,7 +166,7 @@ void ikonized::MainWindow::stackingOrderChanged()
 
 void ikonized::MainWindow::windowChanged(WId id, unsigned int flags)
 {
-    if (id != mSelfWid && 
+    if (id != mSelfWid &&
         (flags & (unsigned int)NET::WMDesktop))
     {
         qDebug() << __func__ << "window " << id << "was moved from one desktop to another. flags:" << flags;
@@ -217,7 +217,7 @@ void ikonized::MainWindow::updateWindowInfo()
         // apparently sane defaults on properties is beyond the wisdom of x11.
         if (type == NET::Desktop || type == NET::Dock || type == NET::TopMenu ||
             type == NET::Splash || type == NET::Menu || type == NET::Toolbar ||
-            info.hasState(NET::SkipPager)) 
+            info.hasState(NET::SkipPager))
         {
             continue;
         }
@@ -259,7 +259,7 @@ void ikonized::MainWindow::updateWindowInfo()
 
             m_windowInfo.append(info);
         }*/
-    }    
+    }
 
     update();
 }
@@ -269,7 +269,7 @@ const int cell_frame=5;
 void ikonized::MainWindow::updateDesktopRegions(const QSize &size)
 {
     // desktiop IDs is 1-based
-    
+
     m_Desktops.resize(mDesktopCount + 1);
     int baseHeight = size.height() / mDesktopCount;
     int overHeightCellCount = size.height() % mDesktopCount;
@@ -282,30 +282,20 @@ void ikonized::MainWindow::updateDesktopRegions(const QSize &size)
         if (m_pSkin != 0)
         {
             // Calculate cell size
-            int cellHeight = baseHeight; 
-            
+            int cellHeight = baseHeight;
+
             if (desk <= overHeightCellCount)
             {
                 cellHeight++;
             }
-            
+
             m_Desktops[desk].m_OveralRegion = QRect(cellPosition, QSize(size.width(), cellHeight));
-            
+
             m_pSkin->GetCellClientRect(m_Desktops[desk].m_OveralRegion.size(), m_Desktops[desk].m_InnerRegion);
             m_Desktops[desk].m_InnerRegion.translate(m_Desktops[desk].m_OveralRegion.topLeft());
-            
+
             cellPosition += QPoint(0, m_Desktops[desk].m_OveralRegion.height()); // Adjust next cell position
-            
-//             qDebug() << "Desktop d=" << desk << m_Desktops[desk].m_OveralRegion;
         }
-
-        //Fixed size reg
-
-//         cell_rect.moveTop(cell_h * (desk-1));
-//         m_Desktops[desk].m_OveralRegion = cell_rect;
-// 
-//         icont_rect.moveTop(cell_h * (desk-1) + cell_frame);
-//         m_Desktops[desk].m_InnerRegion = icont_rect;
 
         // init new hash
         hash += desk;
@@ -333,7 +323,7 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
 {
     QRect desk_rect;
     QRect icon_rect;
-    
+
     QRect client_rect = geometry();
 
     /* draw background */
@@ -348,8 +338,8 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
     }
 
     // loop other windows
-    for (WindowInfoCollection::const_iterator iter =  m_windowInfo.begin(); 
-        iter != m_windowInfo.end(); 
+    for (WindowInfoCollection::const_iterator iter =  m_windowInfo.begin();
+        iter != m_windowInfo.end();
         iter++)
     {
         // check that window is on some desktop
@@ -367,14 +357,14 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
 
             preparePainter(painter, nDesktop);
 
-            // set clipping to inner region 
+            // set clipping to inner region
             Q_ASSERT(nDesktop < m_Desktops.size());
-            
+
             QRect icons_rect;
             m_pSkin->GetCellClientRect(m_Desktops[nDesktop].m_OveralRegion.size(), icons_rect);
             QRect icons_rect_hovered(icons_rect);
             icons_rect_hovered.adjust(-HOVERED_ICON_GROW, -HOVERED_ICON_GROW, HOVERED_ICON_GROW, HOVERED_ICON_GROW);
-            
+
             int icon_index = (m_Desktops[nDesktop].m_nWindowsCount++);
 
             if (getDesktopIconRect(icon_index, icons_rect, icon_rect))
@@ -395,7 +385,7 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
                 // draw an icon
                 // TODO implement pixmap cache
 
-                QPixmap icon = KWindowSystem::icon(iter->mId, 
+                QPixmap icon = KWindowSystem::icon(iter->mId,
                         hovered ? m_IconWidth + HOVERED_ICON_GROW*2 : m_IconWidth,
                         hovered ? m_IconHeight + HOVERED_ICON_GROW*2 : m_IconHeight, true);
 
@@ -405,15 +395,15 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
 //                 if (m_bShowStickyWindows && iter->Sticky && m_pStickyWindowMark)
 //                 {
 //                     Gdiplus::ImageAttributes attr;
-// 
+//
 //                     // TODO Add sticky mark into skin
 //                     static Gdiplus::ColorMap map={Gdiplus::Color::White,Gdiplus::Color::Transparent};
-//                     
+//
 //                     attr.SetRemapTable(1, &map);
-//                     
-//                     g.DrawImage(m_pStickyWindowMark, icon_rect, 
-//                                 0, 0, 
-//                                 m_pStickyWindowMark->GetWidth(), m_pStickyWindowMark->GetHeight(), 
+//
+//                     g.DrawImage(m_pStickyWindowMark, icon_rect,
+//                                 0, 0,
+//                                 m_pStickyWindowMark->GetWidth(), m_pStickyWindowMark->GetHeight(),
 //                                 Gdiplus::UnitPixel,
 //                                 &attr);
 //                 }
@@ -458,12 +448,6 @@ bool ikonized::MainWindow::getDesktopIconRect(int n, const QRect &outer_rect, QR
                       m_IconWidth,
                       m_IconHeight);
 
-//     icon_rect.Y = (icon_row) * ICON_REGION_WIDTH;
-//     icon_rect.X = (icon_col) * ICON_REGION_WIDTH;
-// 
-//     icon_rect.Height = m_IconHeight;
-//     icon_rect.Width  = m_IconWidth;
-
     icon_rect.translate(outer_rect.left(), outer_rect.top());
 
     // check that icon will be visible
@@ -481,33 +465,22 @@ void ikonized::MainWindow::mousePressEvent(QMouseEvent * event)
 
     QPoint point(event->pos());
 
-//     grabMouse();
-
     m_bLeftButtonPressed = true;
 
     m_MousePressPosition = point;
 
     resetDragData();
 
-    if (m_ResizeData.ready/* && m_pSkin->IsSizable()*/)
+    if (m_ResizeData.ready)
     {
         m_State = STATE_RESIZE;
 
         m_ResizeData.original_size = size();
 
-/*        if (m_pSkin)
-        {
-            Gdiplus::Size min_size;
-            m_pSkin->GetMinSize(GetDesktopY(), GetDesktopX(), min_size);
-
-            m_ResizeData.min_w = min_size.Width;
-            m_ResizeData.min_h = min_size.Height;
-        }
-        else*/
-        {
-            m_ResizeData.min_w = m_ResizeData.min_h = 0;
-        }
+        m_ResizeData.min_w = m_ResizeData.min_h = 0;
     }
+
+    checkCursor();
 }
 
 void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
@@ -557,20 +530,12 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
         {
             qDebug() << "Switch to desktop" << desktop;
             KWindowSystem::setCurrentDesktop(desktop);
-
-            // TODO autohiding
-//             if (m_Settings.GetBoolValue(SETTING_HideAfterDesktopChanging)
-//                 && !(m_HideData.m_AutohideForced))
-//            {
-//                 ShowWindow(SW_HIDE);
-//             }
-
         }
 
         if (icon >= 0)
         {
             WId win = getWindowByDesktopIcon(desktop, icon);
-    
+
             if (win > 0)
             {
                 if (killMode())
@@ -581,22 +546,15 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
                 else
                 {
                     qDebug() << "Activate window" << win;
-        
+
                     // access window...
                     KWindowSystem::forceActiveWindow(win);
-        
+
                     if (KWindowSystem::windowInfo(win, NET::WMState | NET::XAWMState).isMinimized())
                     {
                         KWindowSystem::raiseWindow(win);
                     }
-                    
-    //                 if (m_Settings.GetBoolValue(SETTING_HideAfterWindowActivating) && 
-    //                    !(m_HideData.m_AutohideForced))
-    //                 {
-    //                     ShowWindow(SW_HIDE);
-    //                 }
                 }
-                
             }
         }
     }
@@ -604,15 +562,8 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent * event)
 
 void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
 {
-    if (!hasFocus())
-    {
-        qDebug() << "Activating";
-        activateWindow();
-    }
-    
     QPoint point(event->pos());
-//     qDebug() << point;
-    
+
     static QPoint PrevPosition;
 
     /* ignore dummy events */
@@ -622,7 +573,7 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
     }
 
     PrevPosition = point;
-    
+
     if (m_State == STATE_MOVE) // continue moving
     {
         QPoint shift = point - m_MoveData.old_position;
@@ -633,12 +584,12 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
         // adjust window position to screen borders
 //         RECT desktop_rect;
 //         GetVirtualDesktopRect(&desktop_rect);
-// 
+//
 //         if (adjust_window_bounds<LONG>(window_rect.top, window_rect.bottom, desktop_rect.top, desktop_rect.bottom, 10))
 //         {
 //             m_MoveData.old_position.Y = point.Y;
 //         }
-// 
+//
 //         if (adjust_window_bounds<LONG>(window_rect.left, window_rect.right, desktop_rect.left, desktop_rect.right, 10))
 //         {
 //             m_MoveData.old_position.X = point.X;
@@ -668,23 +619,23 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
         if (m_bLeftButtonPressed) // start window moving or icon dragging
         {
             QPoint shift = point - m_MousePressPosition;
-    
+
             if ((point.x() > SWITCH_TO_MOVE_THRESEHOLD) ||
                 (point.x() < -SWITCH_TO_MOVE_THRESEHOLD) ||
                 (point.y() > SWITCH_TO_MOVE_THRESEHOLD) ||
                 (point.y() < -SWITCH_TO_MOVE_THRESEHOLD))
-    
+
             {
                 int desktop, icon;
-    
+
                 getDesktopIconByPoint(point, desktop, icon, &m_DragData.icon_point);
-            
+
                 if (icon >= 0)
                 {
                     WindowInfo* window_info = NULL;
-            
+
                     getWindowByDesktopIcon(desktop, icon, &window_info);
-            
+
                     if (window_info)
                     {
                         if (!window_info->mIsAllDesktops)
@@ -693,35 +644,33 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
                         }
                     }
                 }
-    
+
                 // If dragging wasn't started, start window moving
                 if (m_State == STATE_IDLE)
                 {
                     startWindowMoving(m_MousePressPosition);
                 }
             }
-    
+
         }
-        else 
+        else
         {
     //         if (m_pSkin->IsSizable())
             {
     //             LPCTSTR cursor_name = 0;
                 QRect r = rect();
-    
-    
+
+
 //                 bool left    = (point.x() - r.left()) < RESIZE_BORDER;
                 bool right   = (r.right() - point.x()) < RESIZE_BORDER;
 //                 bool top     = (point.y() - r.top()) < RESIZE_BORDER;
                 bool bottom  = (r.bottom() - point.y()) < RESIZE_BORDER;
-    
+
                 m_ResizeData.ready = true;
-    
+
                 if (/*left && top ||*/
                     right && bottom)
                 {
-//                     qDebug() << r;
-    //              cursor_name = IDC_SIZENWSE;
                     setCursor(Qt::SizeFDiagCursor);
                 }
                 //else if (right && top ||
@@ -739,18 +688,9 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
                 //}
                 else
                 {
-    //                 cursor_name = IDC_ARROW;
                     m_ResizeData.ready = false;
-//                     unsetCursor();
                 }
-    
-    //             if (cursor_name && m_ResizeData.last_cursor != cursor_name)
-    //             {
-    //                 HCURSOR cursor = LoadCursor(0, cursor_name);
-    // 
-    //                 ::SetClassLong(m_hWnd, GCL_HCURSOR, (LONG)cursor);
-    //                 m_ResizeData.last_cursor = cursor_name;
-    //             }
+
             }
 
             int nDesktop, nIcon;
@@ -819,7 +759,7 @@ int ikonized::MainWindow::getDesktopByPoint(const QPoint& point)
     return -1;
 }
 
-void ikonized::MainWindow::getDesktopIconByPoint(const QPoint & point, 
+void ikonized::MainWindow::getDesktopIconByPoint(const QPoint & point,
                                          int & desktop,
                                          int & icon,
                                          QPoint * p_icon_drag_point /* = NULL*/)
@@ -869,7 +809,7 @@ void ikonized::MainWindow::getDesktopIconByPoint(const QPoint & point,
 WId ikonized::MainWindow::getWindowByDesktopIcon(int desktop, int icon, WindowInfo ** windowInfo)
 {
     Q_ASSERT(desktop < m_Desktops.size());
-    
+
     if (m_Desktops[desktop].m_nWindowsCount > 0)
     {
         for (WindowInfoCollection::iterator iter = m_windowInfo.begin(); iter != m_windowInfo.end(); iter++)
@@ -913,7 +853,7 @@ int  ikonized::MainWindow::setDragMode(WId hTargetWnd, const QPoint &position)
     m_DragData.target_window = hTargetWnd;
 
     m_DragData.position = position - m_DragData.icon_point;
-    
+
     checkCursor();
 
     return 0;
@@ -939,7 +879,7 @@ int ikonized::MainWindow::startWindowMoving(const QPoint & ancor_point)
     m_State = STATE_MOVE;
 
     m_MoveData.old_position = ancor_point;
-    
+
     checkCursor();
 
     return 0;
@@ -996,14 +936,14 @@ void ikonized::MainWindow::onConfigureDesktops()
 
 void ikonized::MainWindow::closeEvent(QCloseEvent * event)
 {
-    QMessageBox msgBox(QMessageBox::Question, 
+    QMessageBox msgBox(QMessageBox::Question,
                        "Close ikonized",
                        "Do you want to close ikonized?",
                        QMessageBox::Ok | QMessageBox::Cancel,
                        this);
-                       
+
     msgBox.setDefaultButton(QMessageBox::Cancel);
-    
+
 
     mDialogIsShown = true;
     if (msgBox.exec() == QMessageBox::Ok)
@@ -1023,14 +963,14 @@ void ikonized::MainWindow::closeEvent(QCloseEvent * event)
 void ikonized::MainWindow::menuOptions()
 {
     OptionsDlg options(m_windowInfo, this);
-//     options.setObjectName("options");
+
     qDebug() << "Show settings dialog";
+
     mDialogIsShown = true;
     int result = options.exec();
     mDialogIsShown = false;
+
     qDebug() << "Settings is closed. result: " << result;
-    
-    
 
     if (QDialog::Accepted == result)
     {
@@ -1062,7 +1002,6 @@ int ikonized::MainWindow::setSkin(SkinBase * pNewSkin)
     qDebug() << "Initial cell size" << s;
     resize(QSize(s.width(), s.height() * mDesktopCount)); // TODO desktop layout
 
-
     updateSkinMetrics();
 
     return 1;
@@ -1092,13 +1031,6 @@ void ikonized::MainWindow::onConfigureShortcuts()
     if (err)
     {
         qDebug() << "Key manager launch error" << err << error;
-/*
-        QMessageBox msgBox;
-        msgBox.setText("ikonized error");
-        msgBox.setInformativeText(QString("%1\nerror=%2").arg(error).arg(err));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.exec();*/
     }
 }
 
@@ -1113,7 +1045,7 @@ void ikonized::MainWindow::closeWindow()
 void ikonized::MainWindow::keyPressEvent(QKeyEvent* event)
 {
     QWidget::keyPressEvent(event);
-    
+
     checkCursor();
 }
 
@@ -1121,17 +1053,6 @@ void ikonized::MainWindow::keyReleaseEvent(QKeyEvent* event)
 {
     QWidget::keyReleaseEvent(event);
     checkCursor();
-}
-
-void ikonized::MainWindow::enterEvent(QEvent* event)
-{
-    if (!hasFocus())
-    {
-        qDebug() << "Activating";
-        activateWindow();
-    }
-     
-    QWidget::enterEvent(event);
 }
 
 bool ikonized::MainWindow::killMode()
@@ -1142,7 +1063,7 @@ bool ikonized::MainWindow::killMode()
 void ikonized::MainWindow::checkCursor()
 {
     static bool kc = false;
-    
+
     bool km = killMode();
     if (km)
     {

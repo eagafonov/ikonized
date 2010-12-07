@@ -173,7 +173,6 @@ private:
     virtual void closeEvent(QCloseEvent *event);
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
-    virtual void enterEvent(QEvent *event);
 
     // skin 
     SkinBase *m_pSkin;
