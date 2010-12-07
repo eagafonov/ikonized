@@ -294,7 +294,7 @@ void ikonized::MainWindow::updateDesktopRegions(const QSize &size)
             m_pSkin->GetCellClientRect(m_Desktops[desk].m_OveralRegion.size(), m_Desktops[desk].m_InnerRegion);
             m_Desktops[desk].m_InnerRegion.translate(m_Desktops[desk].m_OveralRegion.topLeft());
             
-            cellPosition += QPoint(m_Desktops[desk].m_OveralRegion.width(), m_Desktops[desk].m_OveralRegion.height()); // Adjust next cell position
+            cellPosition += QPoint(0, m_Desktops[desk].m_OveralRegion.height()); // Adjust next cell position
             
 //             qDebug() << "Desktop d=" << desk << m_Desktops[desk].m_OveralRegion;
         }
