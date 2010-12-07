@@ -581,21 +581,30 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
         QPoint p(pos());
         p += shift;
 
-        // adjust window position to screen borders
-//         RECT desktop_rect;
-//         GetVirtualDesktopRect(&desktop_rect);
-//
-//         if (adjust_window_bounds<LONG>(window_rect.top, window_rect.bottom, desktop_rect.top, desktop_rect.bottom, 10))
-//         {
-//             m_MoveData.old_position.Y = point.Y;
-//         }
-//
-//         if (adjust_window_bounds<LONG>(window_rect.left, window_rect.right, desktop_rect.left, desktop_rect.right, 10))
-//         {
-//             m_MoveData.old_position.X = point.X;
-//         }
 
-            move(p);
+        if (pos().y() == 0 && p.y() < 15) // Stick to top edge
+        {
+            p.setY(0);
+        }
+        else if (p.y() < 10)
+        {
+            p.setY(0);
+            m_MoveData.old_position.setY(point.y());
+        }
+
+        if (pos().x() == 0 && p.x() < 15) // Stick to left edge
+        {
+            p.setX(0);
+        }
+        else if (p.x() < 10)
+        {
+            m_MoveData.old_position.setX(point.x());
+            p.setX(0);
+        }
+
+        // TODO stick to bottom and right. Be carefull with multimonitor system !!!!
+
+        move(p);
     }
     else if (m_State == STATE_RESIZE)
     {
