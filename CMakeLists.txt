@@ -6,4 +6,7 @@ add_subdirectory(src)
 add_subdirectory(skins)
 
 message(" * Install prefix is ${CMAKE_INSTALL_PREFIX}")
+message(" * KIO libs: ${KDE4_KIO_LIBS}")
+message(" * KDE UI libs: ${KDE4_KDEUI_LIBS}")
+
 

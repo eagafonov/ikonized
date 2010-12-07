@@ -20,7 +20,7 @@
 #include <KAction>
 #include <KShortcut>
 #include <QKeySequence>
-#include <QMessageBox>
+#include <KMessageBox>
 #include <klocalizedstring.h>
 #include "optionsdlg.h"
 #include "globals.h"
@@ -945,28 +945,20 @@ void ikonized::MainWindow::onConfigureDesktops()
 
 void ikonized::MainWindow::closeEvent(QCloseEvent * event)
 {
-    QMessageBox msgBox(QMessageBox::Question,
-                       "Close ikonized",
-                       "Do you want to close ikonized?",
-                       QMessageBox::Ok | QMessageBox::Cancel,
-                       this);
-
-    msgBox.setDefaultButton(QMessageBox::Cancel);
-
-
     mDialogIsShown = true;
-    if (msgBox.exec() == QMessageBox::Ok)
+    if (KMessageBox::questionYesNo(this, 
+                                   i18n("Do you want to close ikonized?"),
+                                   i18nc("Close confirmation caption","Close ikonized")) == KMessageBox::Yes)
     {
-        qDebug() << "Quiting is accepted";
+        qDebug() << "I: Exiting";
         event->accept();
         QCoreApplication::instance()->quit();
     }
     else
     {
-        qDebug() << "Quiting is declined";
         event->ignore();
     }
-    mDialogIsShown = true;
+    mDialogIsShown = false;
 }
 
 void ikonized::MainWindow::menuOptions()
