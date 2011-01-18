@@ -1,3 +1,10 @@
+ikonized (0.0.2-pre12) unstable; urgency=low
+
+  * Smooth resize (initial version)
+  * Stick to screen edges (top and left)
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Tue, 18 Jan 2011 16:01:52 +0300
+
 ikonized (0.0.2-pre11) unstable; urgency=low
 
   * Close windows with Ctrl-Alt-Click (initial implementation)
