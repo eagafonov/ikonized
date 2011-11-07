@@ -1021,6 +1021,7 @@ int ikonized::MainWindow::updateSkinMetrics()
 
 void ikonized::MainWindow::preparePainter(QPainter & painter, int desktop)
 {
+//     qDebug() << "Painter: d="<<desktop << m_Desktops[desktop].m_OveralRegion.top();
     painter.setTransform(QTransform::fromTranslate(0, m_Desktops[desktop].m_OveralRegion.top()), false); // FIXME
 }
 
@@ -1095,8 +1096,8 @@ void ikonized::MainWindow::checkCursor()
     }
     else
     {
-        qDebug()  << "Unset cursor";
-        unsetCursor();
+//         qDebug()  << "Unset cursor";
+        unsetCursor(); // TODO avoid mass-update
         kc = false;
     }
 }
