@@ -20,6 +20,7 @@
 #include <list>
 #include <vector>
 #include "assert.h"
+#include <cstddef>
 
 namespace libsizer 
 {

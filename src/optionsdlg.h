@@ -27,7 +27,7 @@ private slots:
 
 private:
     Ui::OptionsDlg *m_ui;
-    mutable const ikonized::WindowInfoCollection &m_windowInfo;
+    const ikonized::WindowInfoCollection &m_windowInfo;
 
     virtual void accept();
 };
