@@ -80,6 +80,9 @@ int SkinSimple::DrawCellBackground(QPainter & painter, bool bActive, const QSize
 
 int SkinSimple::DrawCellForeground(QPainter & g, bool bActive, const QSize &size)
 {
+    Q_UNUSED(g);
+    Q_UNUSED(bActive);
+    Q_UNUSED(size);
     return 1;
 }
 

@@ -324,8 +324,6 @@ void ikonized::MainWindow::drawContent(QPainter & painter)
     QRect desk_rect;
     QRect icon_rect;
 
-    QRect client_rect = geometry();
-
     /* draw background */
     for (int d=1; d <= mDesktopCount; d++)
     {
@@ -627,8 +625,6 @@ void ikonized::MainWindow::mouseMoveEvent(QMouseEvent * event)
     {
         if (m_bLeftButtonPressed) // start window moving or icon dragging
         {
-            QPoint shift = point - m_MousePressPosition;
-
             if ((point.x() > SWITCH_TO_MOVE_THRESEHOLD) ||
                 (point.x() < -SWITCH_TO_MOVE_THRESEHOLD) ||
                 (point.y() > SWITCH_TO_MOVE_THRESEHOLD) ||
