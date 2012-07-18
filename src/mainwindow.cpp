@@ -928,6 +928,10 @@ void ikonized::MainWindow::onHotKey()
             hide();
         }
         else {
+            if (gSettings->value("show.under_cursor", false).toBool()) {
+                move(QCursor::pos());
+            }
+
             showNormal();
         }
     }
