@@ -929,7 +929,16 @@ void ikonized::MainWindow::onHotKey()
         }
         else {
             if (gSettings->value("show.under_cursor", false).toBool()) {
-                move(QCursor::pos());
+
+                QPoint cur_pos = QCursor::pos();
+                if (!(cur_pos.x() >= pos().x() &&
+                    cur_pos.y() >= pos().y() &&
+                    cur_pos.x() <= pos().x() + width() &&
+                    cur_pos.y() <= pos().y() + height()))
+                {
+                    move(QCursor::pos().x() - m_Desktops[mCurrentDesktop].m_OveralRegion.width() / 2,
+                            QCursor::pos().y() - m_Desktops[mCurrentDesktop].m_OveralRegion.y() - m_Desktops[mCurrentDesktop].m_OveralRegion.height() / 2);
+                }
             }
 
             showNormal();
