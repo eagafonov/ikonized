@@ -18,7 +18,10 @@ BUILD_DIR=$(TOP_DIR)/obj-build
 
 override_dh_auto_configure:
 	mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake -DCMAKE_INSTALL_PREFIX=/usr $(TOP_DIR)
+	cd $(BUILD_DIR) && cmake -DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_CXX_FLAGS='-D_FORTIFY_SOURCE=2 -Wl,-z -Wl,relro -Wl,-z -Wl,now' \
+		-DCMAKE_BUILD_TYPE=Release \
+		$(TOP_DIR) 
 
 override_dh_auto_clean:
 	rm -Rf $(BUILD_DIR)
