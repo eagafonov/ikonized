@@ -1,3 +1,9 @@
+ikonized (0.0.3) unstable; urgency=low
+
+  * [DEB] Hardening
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Tue, 13 Nov 2012 03:02:23 +0400
+
 ikonized (0.0.2) unstable; urgency=low
 
   * Reduce logging
