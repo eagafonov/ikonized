@@ -80,10 +80,10 @@ MainWindow::MainWindow()
 
     // Initial hotkey FIXME get from configuration
     KAction *hideShowAction = mActions.addAction("Hide/Show", this, SLOT(onHotKey()));
-
     hideShowAction->setGlobalShortcut(KShortcut(QKeySequence(Qt::AltModifier + Qt::Key_Space)));
 
-    QKeySequence keys = QKeySequence(Qt::AltModifier + Qt::Key_Space);
+    KAction *hideShowAction2 = mActions.addAction("Hide/Show (alternate)", this, SLOT(onHotKey()));
+    hideShowAction2->setGlobalShortcut(KShortcut(QKeySequence()));
 
     m_nTooltipDesktop = m_nTooltipIcon = -1;
 
