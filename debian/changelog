@@ -1,3 +1,10 @@
+ikonized (0.0.4) unstable; urgency=medium
+
+  * Support of alternate show/hide global shortcut
+  * Get tooltip working
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Thu, 01 Oct 2015 12:18:12 +0300
+
 ikonized (0.0.3) unstable; urgency=low
 
   * [DEB] Hardening
