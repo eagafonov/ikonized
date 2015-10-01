@@ -1,7 +1,7 @@
 //
 // C++ Implementation: ikonized
 //
-// Description: 
+// Description:
 //
 //
 // Author: Eugene Agafonov <e.a.agafonov@gmail.com>, (C) 2009
@@ -15,6 +15,7 @@ Ikonized::Ikonized()
 : KApplication()
 {
     mMainWindow.show();
+    mMainWindow.setAttribute(Qt::WA_AlwaysShowToolTips, true);
 }
 
 
