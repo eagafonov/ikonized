@@ -1,3 +1,10 @@
+ikonized (0.0.5) unstable; urgency=medium
+
+  * Fix build for Debian 10
+  * Update copyright year
+
+ -- Eugene Agafonov <eugeneagafonov@localhost>  Wed, 18 Mar 2020 16:19:22 -0700
+
 ikonized (0.0.4) unstable; urgency=medium
 
   * Support of alternate show/hide global shortcut
