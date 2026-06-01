@@ -13,3 +13,4 @@ debian/*.substvars
 *.kdev*
 Doxyfile
 tags
+/debian/*-stamp
