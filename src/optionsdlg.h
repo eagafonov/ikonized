@@ -1,7 +1,7 @@
 #ifndef OPTIONSDLG_H
 #define OPTIONSDLG_H
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include "windowinfo.h"
 

@@ -1,9 +1,6 @@
 //
 // C++ Interface: windowinfo
 //
-// Description: 
-//
-//
 // Author: Eugene Agafonov <e.a.agafonov@gmail.com> (C) 2009-2020
 //
 // Copyright: See COPYING file that comes with this distribution
@@ -13,18 +10,16 @@
 #define IKONIZEDWINDOWINFO_H
 
 #include <QList>
+#include <KWindowSystem>
 #include <KWindowInfo>
+#include <NETWM>
 #include <QString>
 
 namespace ikonized {
 
-/**
-    @author 
-*/
-class WindowInfo{
+class WindowInfo {
 public:
     WindowInfo();
-
     ~WindowInfo();
 
     int mDesktop;

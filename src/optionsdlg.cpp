@@ -3,10 +3,11 @@
 #include "globals.h"
 
 #include <QDebug>
-#include <KFileDialog>
+#include <QFileDialog>
 #include <KWindowSystem>
-#include <KToolInvocation>
+#include <QProcess>
 #include <QMessageBox>
+#include <QRandomGenerator>
 
 OptionsDlg::OptionsDlg(const ikonized::WindowInfoCollection &windowInfo, QWidget *parent) :
     QDialog(parent),
@@ -14,16 +15,16 @@ OptionsDlg::OptionsDlg(const ikonized::WindowInfoCollection &windowInfo, QWidget
     m_windowInfo(windowInfo)
 {
     m_ui->setupUi(this);
-    connect(m_ui->iconSizeSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(iconSizeValueChanged(int)));
+    connect(m_ui->iconSizeSlider, &QSlider::valueChanged,
+            this, &OptionsDlg::iconSizeValueChanged);
 
-    connect(m_ui->skinFileBrowseBtn, SIGNAL(clicked(bool)),
-            this, SLOT(browseSkin(bool)));
+    connect(m_ui->skinFileBrowseBtn, &QPushButton::clicked,
+            this, &OptionsDlg::browseSkin);
 
-    connect(m_ui->launchKeyManagerBtn, SIGNAL(clicked(bool)),
-            this, SLOT(launchKeyManagerBtn(bool)));
+    connect(m_ui->launchKeyManagerBtn, &QPushButton::clicked,
+            this, &OptionsDlg::launchKeyManagerBtn);
 
-   getValues();
+    getValues();
 }
 
 OptionsDlg::~OptionsDlg()
@@ -57,68 +58,56 @@ void OptionsDlg::getValues()
 void OptionsDlg::setValues()
 {
     Q_ASSERT(gSettings != 0);
-    gSettings->setValue("hide.desktop_changed",m_ui->hideOnChangeDesktop->checkState() == Qt::Checked);
-    gSettings->setValue("hide.activate_window",m_ui->hideOnActivateWindow->checkState() == Qt::Checked);
+    gSettings->setValue("hide.desktop_changed", m_ui->hideOnChangeDesktop->checkState() == Qt::Checked);
+    gSettings->setValue("hide.activate_window", m_ui->hideOnActivateWindow->checkState() == Qt::Checked);
     gSettings->setValue("icon.size", m_ui->iconSizeSlider->value());
-    gSettings->setValue("icon.size", m_ui->iconSizeSlider->value());
-
     gSettings->setValue("skin.filename", m_ui->skinFilenameEdit->text());
-
     gSettings->setValue("show.under_cursor", m_ui->showUnderCursor->checkState() == Qt::Checked);
 }
 
 void OptionsDlg::accept()
 {
     setValues();
-
     QDialog::accept();
 }
 
 void OptionsDlg::iconSizeValueChanged(int size)
 {
-    qDebug() << "OPTIONS: Icon size " << size;
+    qDebug() << "OPTIONS: Icon size" << size;
 
     if (m_windowInfo.empty())
     {
         QPixmap icon(size, size);
         icon.fill(Qt::blue);
-
         m_ui->iconPreview->setPixmap(icon);
     }
     else
     {
-        QPixmap icon = KWindowSystem::icon(m_windowInfo[qrand() % m_windowInfo.size()].mId, size, size, true);
+        int idx = QRandomGenerator::global()->bounded(m_windowInfo.size());
+        QPixmap icon = KWindowSystem::icon(m_windowInfo[idx].mId, size, size, true);
         m_ui->iconPreview->setPixmap(icon);
     }
 }
 
 void OptionsDlg::browseSkin(bool)
 {
-    QString filename = KFileDialog::getOpenFileName(KUrl(), "*.svg", this, "Select skin");
-    
+    QString filename = QFileDialog::getOpenFileName(this, "Select skin", QString(), "SVG files (*.svg)");
+
     if (!filename.isEmpty())
     {
-       m_ui->skinFilenameEdit->setText(filename);
+        m_ui->skinFilenameEdit->setText(filename);
     }
 }
 
-void OptionsDlg::launchKeyManagerBtn(bool )
+void OptionsDlg::launchKeyManagerBtn(bool)
 {
-  QString error;
-  int err = KToolInvocation::startServiceByDesktopName("keys", QStringList(), &error);
+    bool ok = QProcess::startDetached("kcmshell5", QStringList() << "keys");
 
-  if (err)
-  {
-        qDebug() << "Key manager launch error" << err << error;
-
-         QMessageBox msgBox;
-         msgBox.setText("ikonized error");
-//          msgBox.setInformativeText(QString("%1\nerror=%2").arg(error).arg(err));
-//          msgBox.setStandardButtons(QMessageBox::Ok);
-//          msgBox.setDefaultButton(QMessageBox::Ok);
-         msgBox.exec();
-  }
-  else
-  {
-  }
+    if (!ok)
+    {
+        qDebug() << "Key manager launch error";
+        QMessageBox msgBox;
+        msgBox.setText("Failed to launch key manager");
+        msgBox.exec();
+    }
 }
