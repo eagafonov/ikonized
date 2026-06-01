@@ -1,3 +1,11 @@
+ikonized (0.1.0) unstable; urgency=medium
+
+  * Port to KDE Frameworks 5 / Qt5
+  * Replace KDE4 APIs with KF5 equivalents
+  * Modernize build system (CMake 3.16+, ECM)
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Sun, 01 Jun 2026 16:45:00 +0000
+
 ikonized (0.0.5) unstable; urgency=medium
 
   * Fix build for Debian 10
