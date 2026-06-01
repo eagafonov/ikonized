@@ -4,7 +4,7 @@
 // Description: 
 //
 //
-// Author: Eugene Agafonov <e.a.agafonov@gmail.com> (C) 2009-2020
+// Author: Eugene Agafonov <e.a.agafonov@gmail.com> (C) 2009-2026
 //
 // Copyright: See COPYING file that comes with this distribution
 //
