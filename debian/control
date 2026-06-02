@@ -5,15 +5,14 @@ Maintainer: Eugene Agafonov <e.a.agafonov@gmail.com>
 Build-Depends: debhelper-compat (= 13),
                cmake (>= 3.16),
                extra-cmake-modules,
-               qtbase5-dev,
-               libqt5svg5-dev,
-               libqt5x11extras5-dev,
-               libkf5windowsystem-dev,
-               libkf5globalaccel-dev,
-               libkf5i18n-dev,
-               libkf5widgetsaddons-dev,
-               libkf5xmlgui-dev,
-               libkf5config-dev
+               qt6-base-dev,
+               qt6-svg-dev,
+               libkf6windowsystem-dev,
+               libkf6globalaccel-dev,
+               libkf6i18n-dev,
+               libkf6widgetsaddons-dev,
+               libkf6xmlgui-dev,
+               libkf6config-dev
 Standards-Version: 4.6.0
 
 Package: ikonized

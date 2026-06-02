@@ -4,7 +4,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
-#include <KWindowSystem>
+#include <KX11Extras>
 #include <QProcess>
 #include <QMessageBox>
 #include <QRandomGenerator>
@@ -86,7 +86,7 @@ void OptionsDlg::iconSizeValueChanged(int size)
     else
     {
         int idx = QRandomGenerator::global()->bounded(m_windowInfo.size());
-        QPixmap icon = KWindowSystem::icon(m_windowInfo[idx].mId, size, size, true);
+        QPixmap icon = KX11Extras::icon(m_windowInfo[idx].mId, size, size, true);
         m_ui->iconPreview->setPixmap(icon);
     }
 }
@@ -103,7 +103,7 @@ void OptionsDlg::browseSkin(bool)
 
 void OptionsDlg::launchKeyManagerBtn(bool)
 {
-    bool ok = QProcess::startDetached("kcmshell5", QStringList() << "keys");
+    bool ok = QProcess::startDetached("kcmshell6", QStringList() << "keys");
 
     if (!ok)
     {

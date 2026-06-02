@@ -10,8 +10,8 @@ set(CMAKE_AUTOUIC ON)
 find_package(ECM REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets Svg X11Extras)
-find_package(KF5 REQUIRED COMPONENTS WindowSystem GlobalAccel I18n XmlGui WidgetsAddons Config)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Svg)
+find_package(KF6 REQUIRED COMPONENTS WindowSystem GlobalAccel I18n XmlGui WidgetsAddons Config)
 
 add_subdirectory(src)
 add_subdirectory(skins)

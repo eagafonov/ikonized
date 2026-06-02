@@ -10,6 +10,7 @@
 
 #include <QPainter>
 #include <KWindowSystem>
+#include <KX11Extras>
 #include <KWindowInfo>
 #include <NETWM>
 #include <QDebug>
@@ -20,6 +21,7 @@
 #include <KGlobalAccel>
 #include <KLocalizedString>
 #include <KMessageBox>
+#include <KStandardGuiItem>
 #include "optionsdlg.h"
 #include "globals.h"
 #include "skinbase.h"
@@ -31,7 +33,8 @@
 #include <QSize>
 #include <Qt>
 
-#include <QX11Info>
+#include <QGuiApplication>
+#include <private/qtx11extras_p.h>
 
 #define SWITCH_TO_MOVE_THRESEHOLD 10
 #define RESIZE_BORDER 20
@@ -57,17 +60,17 @@ MainWindow::MainWindow()
 {
     setWindowTitle("ikonized_main_window");
 
-    mDesktopCount = KWindowSystem::numberOfDesktops();
-    mCurrentDesktop = KWindowSystem::currentDesktop();
+    mDesktopCount = KX11Extras::numberOfDesktops();
+    mCurrentDesktop = KX11Extras::currentDesktop();
     updateDesktopRegions(size());
 
-    connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged, this, &MainWindow::currentDesktopChanged);
-    connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &MainWindow::windowAdded);
-    connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &MainWindow::windowRemoved);
-    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &MainWindow::activeWindowChanged);
-    connect(KWindowSystem::self(), &KWindowSystem::numberOfDesktopsChanged, this, &MainWindow::numberOfDesktopsChanged);
-    connect(KWindowSystem::self(), &KWindowSystem::desktopNamesChanged, this, &MainWindow::desktopNamesChanged);
-    connect(KWindowSystem::self(), static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged),
+    connect(KX11Extras::self(), &KX11Extras::currentDesktopChanged, this, &MainWindow::currentDesktopChanged);
+    connect(KX11Extras::self(), &KX11Extras::windowAdded, this, &MainWindow::windowAdded);
+    connect(KX11Extras::self(), &KX11Extras::windowRemoved, this, &MainWindow::windowRemoved);
+    connect(KX11Extras::self(), &KX11Extras::activeWindowChanged, this, &MainWindow::activeWindowChanged);
+    connect(KX11Extras::self(), &KX11Extras::numberOfDesktopsChanged, this, &MainWindow::numberOfDesktopsChanged);
+    connect(KX11Extras::self(), &KX11Extras::desktopNamesChanged, this, &MainWindow::desktopNamesChanged);
+    connect(KX11Extras::self(), &KX11Extras::windowChanged,
             this, &MainWindow::windowChanged);
     connect(KWindowSystem::self(), &KWindowSystem::showingDesktopChanged, this, &MainWindow::showingDesktopChanged);
 
@@ -180,7 +183,7 @@ void ikonized::MainWindow::updateWindowInfo()
 {
     m_windowInfo.clear();
 
-    QList<WId> windows = KWindowSystem::stackingOrder();
+    QList<WId> windows = KX11Extras::stackingOrder();
 
     for (WId window : windows) {
         KWindowInfo info(window, NET::WMGeometry | NET::WMFrameExtents |
@@ -200,14 +203,14 @@ void ikonized::MainWindow::updateWindowInfo()
             if (info.visibleName() == windowTitle())
             {
                 mSelfWid = window;
-                KWindowSystem::setOnAllDesktops(mSelfWid, true);
+                KX11Extras::setOnAllDesktops(mSelfWid, true);
             }
         }
         else if (mSelfWid == window)
         {
             if (!info.onAllDesktops())
             {
-                KWindowSystem::setOnAllDesktops(mSelfWid, true);
+                KX11Extras::setOnAllDesktops(mSelfWid, true);
             }
             continue;
         }
@@ -336,7 +339,7 @@ void ikonized::MainWindow::drawContent(QPainter &painter)
                     painter.setClipRect(icons_rect);
                 }
 
-                QPixmap icon = KWindowSystem::icon(iter->mId,
+                QPixmap icon = KX11Extras::icon(iter->mId,
                         hovered ? m_IconWidth + HOVERED_ICON_GROW * 2 : m_IconWidth,
                         hovered ? m_IconHeight + HOVERED_ICON_GROW * 2 : m_IconHeight, true);
 
@@ -429,7 +432,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent *event)
     {
         if ((desktop = getDesktopByPoint(point)) != getDesktopByPoint(m_MousePressPosition))
         {
-            KWindowSystem::setOnDesktop(m_DragData.target_window, desktop);
+            KX11Extras::setOnDesktop(m_DragData.target_window, desktop);
         }
 
         resetDragData();
@@ -454,7 +457,7 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent *event)
         if (desktop != mCurrentDesktop)
         {
             qDebug() << "Switch to desktop" << desktop;
-            KWindowSystem::setCurrentDesktop(desktop);
+            KX11Extras::setCurrentDesktop(desktop);
         }
 
         if (icon >= 0)
@@ -472,12 +475,12 @@ void ikonized::MainWindow::mouseReleaseEvent(QMouseEvent *event)
                 {
                     qDebug() << "Activate window" << win;
 
-                    KWindowSystem::forceActiveWindow(win);
+                    KX11Extras::forceActiveWindow(win);
 
                     KWindowInfo winInfo(win, NET::WMState | NET::XAWMState);
                     if (winInfo.isMinimized())
                     {
-                        KWindowSystem::raiseWindow(win);
+                        KX11Extras::forceActiveWindow(win);
                     }
                 }
             }
@@ -894,15 +897,17 @@ QPoint ikonized::MainWindow::currentDesktopCenter() const {
 
 void ikonized::MainWindow::onConfigureDesktops()
 {
-    QProcess::startDetached("kcmshell5", QStringList() << "kcm_kwin_virtualdesktops");
+    QProcess::startDetached("kcmshell6", QStringList() << "kcm_kwin_virtualdesktops");
 }
 
 void ikonized::MainWindow::closeEvent(QCloseEvent *event)
 {
     mDialogIsShown = true;
-    if (KMessageBox::questionYesNo(this,
+    if (KMessageBox::questionTwoActions(this,
                                    i18n("Do you want to close ikonized?"),
-                                   i18nc("Close confirmation caption", "Close ikonized")) == KMessageBox::Yes)
+                                   i18nc("Close confirmation caption", "Close ikonized"),
+                                   KStandardGuiItem::quit(),
+                                   KStandardGuiItem::cancel()) == KMessageBox::PrimaryAction)
     {
         qDebug() << "I: Exiting";
         event->accept();
@@ -979,13 +984,13 @@ void ikonized::MainWindow::preparePainter(QPainter &painter, int desktop)
 
 void ikonized::MainWindow::onConfigureShortcuts()
 {
-    QProcess::startDetached("kcmshell5", QStringList() << "keys");
+    QProcess::startDetached("kcmshell6", QStringList() << "keys");
 }
 
 void ikonized::MainWindow::closeWindow()
 {
     if (m_hoveredWindow) {
-        NETRootInfo ri(QX11Info::connection(), NET::CloseWindow);
+        NETRootInfo ri(qGuiApp->nativeInterface<QNativeInterface::QX11Application>()->connection(), NET::CloseWindow);
         ri.closeWindowRequest(m_hoveredWindow);
     }
 }
@@ -1029,7 +1034,7 @@ void ikonized::MainWindow::checkCursor()
     }
     else if (m_State == STATE_DRAG_ICON)
     {
-        QCursor cursor(KWindowSystem::icon(m_DragData.target_window, m_IconWidth, m_IconHeight, true), m_DragData.icon_point.x(), m_DragData.icon_point.y());
+        QCursor cursor(KX11Extras::icon(m_DragData.target_window, m_IconWidth, m_IconHeight, true), m_DragData.icon_point.x(), m_DragData.icon_point.y());
         setCursor(cursor);
         kc = false;
     }

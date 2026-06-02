@@ -10,7 +10,7 @@
 #define IKONIZEDWINDOWINFO_H
 
 #include <QList>
-#include <KWindowSystem>
+#include <KX11Extras>
 #include <KWindowInfo>
 #include <NETWM>
 #include <QString>

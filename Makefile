@@ -6,16 +6,16 @@ all: build
 
 deps:
 	sudo apt-get install -y \
-		qtbase5-dev \
-		libkf5windowsystem-dev \
-		libkf5globalaccel-dev \
-		libkf5i18n-dev \
-		libkf5widgetsaddons-dev \
-		libkf5xmlgui-dev \
-		libkf5config-dev \
-		libkf5configwidgets-dev \
-		libqt5svg5-dev \
-		libqt5x11extras5-dev \
+		qt6-base-dev \
+		qt6-base-private-dev \
+		qt6-svg-dev \
+		libkf6windowsystem-dev \
+		libkf6globalaccel-dev \
+		libkf6i18n-dev \
+		libkf6widgetsaddons-dev \
+		libkf6xmlgui-dev \
+		libkf6config-dev \
+		libkf6configwidgets-dev \
 		extra-cmake-modules \
 		libxcb-ewmh-dev \
 		libxcb-icccm4-dev \
