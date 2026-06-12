@@ -230,6 +230,13 @@
                   </property>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QCheckBox" name="showPrevWindowUnderCursor">
+                  <property name="text">
+                   <string>Previous window under cursor</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
              </layout>

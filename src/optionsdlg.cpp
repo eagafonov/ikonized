@@ -53,6 +53,7 @@ void OptionsDlg::getValues()
     m_ui->iconSizeSlider->setValue(gSettings->value("icon.size", 32).toInt());
     m_ui->skinFilenameEdit->setText(gSettings->value("skin.filename", "").toString());
     m_ui->showUnderCursor->setChecked(gSettings->value("show.under_cursor", false).toBool());
+    m_ui->showPrevWindowUnderCursor->setChecked(gSettings->value("show.prev_window_under_cursor", false).toBool());
 }
 
 void OptionsDlg::setValues()
@@ -63,6 +64,7 @@ void OptionsDlg::setValues()
     gSettings->setValue("icon.size", m_ui->iconSizeSlider->value());
     gSettings->setValue("skin.filename", m_ui->skinFilenameEdit->text());
     gSettings->setValue("show.under_cursor", m_ui->showUnderCursor->checkState() == Qt::Checked);
+    gSettings->setValue("show.prev_window_under_cursor", m_ui->showPrevWindowUnderCursor->checkState() == Qt::Checked);
 }
 
 void OptionsDlg::accept()

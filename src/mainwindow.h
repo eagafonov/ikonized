@@ -149,6 +149,9 @@ private:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
 
+    // Position helpers
+    QPoint currentDesktopCenter() const;
+
     // skin
     SkinBase *m_pSkin;
     bool mDialogIsShown;

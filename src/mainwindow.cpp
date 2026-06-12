@@ -815,21 +815,81 @@ void ikonized::MainWindow::onHotKey()
             hide();
         }
         else {
+            // A point within a UI that should appear under the cursor
+            // Positive coordinates - means there is a UI point to move under the cursor
+            // Negative X - no such point (do not move the window)
+            QPoint target_pos(-1, -1);
+
             if (gSettings->value("show.under_cursor", false).toBool()) {
                 QPoint cur_pos = QCursor::pos();
-                if (!(cur_pos.x() >= pos().x() &&
-                    cur_pos.y() >= pos().y() &&
-                    cur_pos.x() <= pos().x() + width() &&
-                    cur_pos.y() <= pos().y() + height()))
-                {
-                    move(QCursor::pos().x() - m_Desktops[mCurrentDesktop].m_OveralRegion.width() / 2,
-                         QCursor::pos().y() - m_Desktops[mCurrentDesktop].m_OveralRegion.y() - m_Desktops[mCurrentDesktop].m_OveralRegion.height() / 2);
+
+                if (gSettings->value("show.prev_window_under_cursor", false).toBool()) {
+                    // Always reposition: place the previous window's icon under the cursor.
+                    // m_windowInfo is in stacking order: last = active, second-to-last = previous.
+                    // The previous window may be on any desktop.
+                    int prevIconIndex = -1;
+                    int targetDesktop = -1;
+
+                    if (m_windowInfo.size() >= 2) {
+                        WId prevWindow = m_windowInfo[m_windowInfo.size() - 2].mId;
+                        targetDesktop = m_windowInfo[m_windowInfo.size() - 2].mDesktop;
+
+                        // Find its icon index within that desktop's cell
+                        int idx = 0;
+                        for (const auto &winfo : m_windowInfo) {
+                            if (winfo.mDesktop == targetDesktop ||
+                                (winfo.mIsAllDesktops && mShowAllDesktopWindows)) {
+                                if (winfo.mId == prevWindow) {
+                                    prevIconIndex = idx;
+                                    break;
+                                }
+                                idx++;
+                            }
+                        }
+                    }
+
+                    if (prevIconIndex >= 0 && targetDesktop > 0 && targetDesktop < m_Desktops.size()) {
+                        QRect icons_rect;
+                        m_pSkin->GetCellClientRect(m_Desktops[targetDesktop].m_OveralRegion.size(), icons_rect);
+
+                        QRect icon_rect;
+                        if (getDesktopIconRect(prevIconIndex, icons_rect, icon_rect)) {
+                            // Calculate the icon center in widget coordinates
+                            target_pos.setX(m_Desktops[targetDesktop].m_InnerRegion.left() + icon_rect.center().x());
+                            target_pos.setY(m_Desktops[targetDesktop].m_OveralRegion.top() + icon_rect.center().y());
+                        } else {
+                            target_pos = currentDesktopCenter();
+                        }
+                    } else {
+                        target_pos = currentDesktopCenter();
+                    }
+                } else {
+                    // Original behavior: center of current desktop cell under cursor,
+                    // but only if cursor is not already over the widget
+                    if (!(cur_pos.x() >= pos().x() &&
+                        cur_pos.y() >= pos().y() &&
+                        cur_pos.x() <= pos().x() + width() &&
+                        cur_pos.y() <= pos().y() + height()))
+                    {
+                        target_pos = currentDesktopCenter();
+                    }
                 }
+            }
+
+            if (target_pos.x() >= 0) {
+                move(QCursor::pos() - target_pos);
             }
 
             showNormal();
         }
     }
+}
+
+QPoint ikonized::MainWindow::currentDesktopCenter() const {
+    return QPoint(
+        m_Desktops[mCurrentDesktop].m_OveralRegion.width() / 2,
+        m_Desktops[mCurrentDesktop].m_OveralRegion.y() + m_Desktops[mCurrentDesktop].m_OveralRegion.height() / 2
+    );
 }
 
 void ikonized::MainWindow::onConfigureDesktops()
