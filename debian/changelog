@@ -1,3 +1,9 @@
+ikonized (0.1.1) unstable; urgency=medium
+
+  * Add 'previous window under cursor' positioning mode
+
+ -- Eugene Agafonov <e.a.agafonov@gmail.com>  Fri, 12 Jun 2026 17:14:13 -0700
+
 ikonized (0.1.0) unstable; urgency=medium
 
   * Port to KDE Frameworks 5 / Qt5
